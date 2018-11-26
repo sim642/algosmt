@@ -3,15 +3,14 @@ package eu.sim642.algosmt.idl
 import scala.collection.mutable
 
 object BellmanFord {
-  type Vertex = String
   type Weight = Int
-  type Edge = (Vertex, Weight, Vertex)
+  type Edge[A] = (A, Weight, A)
 
-  def bellmanFord(vertices: Seq[Vertex], edges: Seq[Edge], source: Vertex): Option[Map[Vertex, Weight]] = {
+  def bellmanFord[A](vertices: Seq[A], edges: Seq[Edge[A]], source: A): Option[Map[A, Weight]] = {
     // https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm#Algorithm
 
     // step 1: initialize graph
-    val distance: mutable.Map[Vertex, Weight] = mutable.Map.empty
+    val distance: mutable.Map[A, Weight] = mutable.Map.empty
     distance(source) = 0
 
     // step 2: relax edges repeatedly
