@@ -1,4 +1,4 @@
-package simsat
+package eu.sim642.algosmt
 
 import scala.language.implicitConversions
 

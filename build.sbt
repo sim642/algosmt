@@ -1,4 +1,4 @@
-name := "simsat"
+name := "algosmt"
 
 version := "0.1"
 
