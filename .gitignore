@@ -1,0 +1,6 @@
+# IDEA
+.idea/
+out/
+
+# SBT
+target/
