@@ -1,7 +1,7 @@
 package eu.sim642.algosmt.idl
 
 import eu.sim642.algosmt.idl.BellmanFord.Edge
-import eu.sim642.algosmt.smtlib.{Atom, Compound, SExpParser}
+import eu.sim642.algosmt.smtlib.{Application, Atom, Compound, SExpParser}
 
 object IDL {
   case class Constraint[A](x: A, y: A, n: Int) {
@@ -30,8 +30,8 @@ object IDL {
     SExpParser.parseMultiple(in) match {
       case SExpParser.Success(result, next) =>
         result.map({
-          case Compound(Atom("<="), Compound(Atom("-"), Atom(x), Atom(y)), Atom(n)) => Constraint(x, y, n.toInt)
-          case Compound(Atom("<="), Compound(Atom("-"), Atom(x), Atom(y)), Compound(Atom("-"), Atom(n))) => Constraint(x, y, -n.toInt)
+          case Application("<=", Application("-", Atom(x), Atom(y)), Atom(n)) => Constraint(x, y, n.toInt)
+          case Application("<=", Application("-", Atom(x), Atom(y)), Application("-", Atom(n))) => Constraint(x, y, -n.toInt)
         })
       case SExpParser.NoSuccess(msg, next) => throw new RuntimeException(msg)
     }
