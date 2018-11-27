@@ -13,4 +13,6 @@ object SExpParser extends RegexParsers {
   )
 
   def parse(in: CharSequence): ParseResult[SExp] = parseAll(sexp, in)
+
+  def parseMultiple(in: CharSequence): ParseResult[Seq[SExp]] = parseAll(rep(sexp), in)
 }
