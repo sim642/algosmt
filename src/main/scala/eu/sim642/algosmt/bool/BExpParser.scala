@@ -1,7 +1,6 @@
 package eu.sim642.algosmt.bool
 
-import eu.sim642.algosmt.idl.IDL
-import eu.sim642.algosmt.idl.IDL.Constraint
+import eu.sim642.algosmt.idl.IDLConstraintBExpParser
 import eu.sim642.algosmt.smtlib._
 
 trait BExpParser[A] {
@@ -13,16 +12,19 @@ trait BExpParser[A] {
       case SExpParser.NoSuccess(msg, next) => throw new RuntimeException(msg)
     }
   }
+
+  def parseMultiple(in: CharSequence): Seq[BExp[A]] = {
+    SExpParser.parseMultiple(in) match {
+      case SExpParser.Success(result, next) => result.map(fromSExp)
+      case SExpParser.NoSuccess(msg, next) => throw new RuntimeException(msg)
+    }
+  }
 }
 
 object VarBExpParser extends BExpParser[String] {
   override def fromSExp(sexp: SExp): BExp[String] = sexp match {
     case Atom(str) => Var(str)
   }
-}
-
-object IDLConstraintBExpParser extends BExpParser[Constraint[String]] {
-  override def fromSExp(sexp: SExp): BExp[Constraint[String]] = Var(IDL.fromSExp(sexp)) // TODO: move here
 }
 
 case class BooleanBExpParser[A](delegate: BExpParser[A]) extends BExpParser[A] {
