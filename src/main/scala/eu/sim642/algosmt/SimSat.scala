@@ -19,8 +19,8 @@ case class NegLiteral[A](variable: A) extends Literal[A] {
 
 object SimSat {
 
-  type Disjunct[A] = List[Literal[A]]
-  type CNF[A] = List[Disjunct[A]]
+  type Disjunct[A] = Seq[Literal[A]]
+  type CNF[A] = Seq[Disjunct[A]]
 
   def extractVariables[A](cnf: CNF[A]): Set[A] = {
     (for {
@@ -96,7 +96,7 @@ object SimSat {
 
   def solveAll[A](satSolve: CNF[A] => Option[Set[Literal[A]]])(cnf: CNF[A]): List[Set[Literal[A]]] = {
     Stream.unfold(cnf) { cnf =>
-      satSolve(cnf).map(solution => (solution.map(_.neg).toList :: cnf, solution))
+      satSolve(cnf).map(solution => (solution.map(_.neg).toList +: cnf, solution))
     }.toList
   }
 
