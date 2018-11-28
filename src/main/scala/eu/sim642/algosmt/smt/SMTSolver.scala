@@ -1,6 +1,7 @@
 package eu.sim642.algosmt.smt
 
 import eu.sim642.algosmt.SimSat.{CNF, toLiteral}
+import eu.sim642.algosmt.bool.PureTheorySolver
 import eu.sim642.algosmt.idl.IDL.Constraint
 import eu.sim642.algosmt.idl.IDLTheorySolver
 
@@ -9,6 +10,7 @@ trait SMTSolver[A, B, C] {
 }
 
 object SMTSolver {
+  val pureBruteForceSolver = new BruteForceSMTSolver(new PureTheorySolver[String])
   val idlBruteForceSolver = new BruteForceSMTSolver(new IDLTheorySolver[String])
 
   def main(args: Array[String]): Unit = {
