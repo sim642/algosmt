@@ -1,5 +1,8 @@
 package eu.sim642.algosmt.bool
 
+import eu.sim642.algosmt.{NegLiteral, PosLiteral}
+import eu.sim642.algosmt.SimSat.{CNF, Disjunct}
+
 object CNFConverter {
   def convert[A](exp: BExp[A]): BExp[A] = distribute(convertNNF(exp))
 
@@ -24,5 +27,19 @@ object CNFConverter {
     case Or(left, right) => distributeOr(distribute(left), distribute(right))
 
     case exp => exp
+  }
+
+
+  def convertFlat[A](exp: BExp[A]): CNF[A] = flattenCNF(convert(exp))
+
+  def flattenDisjunct[A](exp: BExp[A]): Disjunct[A] = exp match {
+    case Var(name) => List(PosLiteral(name))
+    case Not(Var(name)) => List(NegLiteral(name))
+    case Or(left, right) => flattenDisjunct(left) ++ flattenDisjunct(right)
+  }
+
+  def flattenCNF[A](exp: BExp[A]): CNF[A] = exp match {
+    case And(left, right) => flattenCNF(left) ++ flattenCNF(right)
+    case exp => List(flattenDisjunct(exp))
   }
 }
