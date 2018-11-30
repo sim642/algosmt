@@ -6,7 +6,7 @@ object BellmanFord {
   type Weight = Int
   type Edge[A] = (A, Weight, A)
 
-  def bellmanFord[A](vertices: Seq[A], edges: Seq[Edge[A]], source: A): Option[Map[A, Weight]] = {
+  def bellmanFord[A](vertices: Set[A], edges: Set[Edge[A]], source: A): Option[Map[A, Weight]] = {
     // https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm#Algorithm
 
     // step 1: initialize graph
@@ -32,9 +32,9 @@ object BellmanFord {
   }
 
   def main(args: Array[String]): Unit = {
-    println(bellmanFord(
-      Seq("x0", "x1", "x2", "x3"),
-      Seq(
+    println(bellmanFord[String](
+      Set("x0", "x1", "x2", "x3"),
+      Set(
         ("x0", 0, "x1"),
         ("x0", 0, "x2"),
         ("x0", 0, "x3"),
@@ -46,9 +46,9 @@ object BellmanFord {
       "x0"
     ))
 
-    println(bellmanFord(
-      Seq("x0", "x1", "x2", "x3"),
-      Seq(
+    println(bellmanFord[String](
+      Set("x0", "x1", "x2", "x3"),
+      Set(
         ("x0", 0, "x1"),
         ("x0", 0, "x2"),
         ("x0", 0, "x3"),

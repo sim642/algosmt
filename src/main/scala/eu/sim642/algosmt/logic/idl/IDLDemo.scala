@@ -4,10 +4,10 @@ import eu.sim642.algosmt.core.Var
 
 object IDLDemo extends IDLSolver[String] {
 
-  def parseConstraints(in: CharSequence): Seq[Constraint[String]] = {
+  def parseConstraints(in: CharSequence): Set[Constraint[String]] = {
     IDLParser.parseMultiple(in).map({
       case Var(constraint) => constraint
-    })
+    }).toSet
   }
 
   def main(args: Array[String]): Unit = {
