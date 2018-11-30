@@ -21,6 +21,7 @@ object IDLConstraintBExpParser extends BExpParser[Constraint[String]] {
       case Application(op, Atom(x), Application("+", IntAtom(n), Atom(y))) => Some((op, x, y, n)) // x OP n + y -> x - y OP n
       case Application(op, Application("+", Atom(x), IntAtom(n)), Atom(y)) => Some((op, x, y, -n)) // x + n OP y -> x - y OP -n
       case Application(op, Application("+", IntAtom(n), Atom(x)), Atom(y)) => Some((op, x, y, -n)) // n + x OP y -> x - y OP -n
+      case Application(op, Atom(x), Atom(y)) => Some((op, x, y, 0)) // x OP y -> x - y OP 0
       case _ => None
     }
   }
