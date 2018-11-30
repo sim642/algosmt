@@ -1,13 +1,19 @@
 package eu.sim642.algosmt.smtlib
 
-import eu.sim642.algosmt.bool.{And, BExp, BExpParser, CNFConverter}
-import eu.sim642.algosmt.smt.SMTSolver
-import eu.sim642.algosmt.theory.{CoreTheory, IntTheory, Theory}
+import eu.sim642.algosmt.bool._
+import eu.sim642.algosmt.logic.Logic
+import eu.sim642.algosmt.logic.idl.IntegerDifferenceLogic
+import eu.sim642.algosmt.logic.pl.PropositionalLogic
+import eu.sim642.algosmt.smt.DPLLSMTSolver
 
 import scala.collection.mutable
 import scala.io.StdIn
 
-class SMTLibInterpreter[A, B, C](private val theory: Theory, private val parser: BExpParser[A], private val solver: SMTSolver[A, B, C]) {
+class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) {
+  private val theory = logic.theory
+  private val parser = BooleanBExpParser(logic.parser)
+  private val solver = new DPLLSMTSolver(logic.solver)
+
   private val assertions: mutable.Buffer[BExp[A]] = mutable.Buffer.empty
   private var modelOption: Option[Map[B, C]] = None
 
@@ -69,8 +75,8 @@ class SMTLibInterpreter[A, B, C](private val theory: Theory, private val parser:
 
 object SMTLibInterpreter {
   def main(args: Array[String]): Unit = {
-    //val smt = new SMTLibInterpreter(CoreTheory, BExpParser.pureBooleanParser, SMTSolver.pureDpllSolver)
-    val smt = new SMTLibInterpreter(CoreTheory + IntTheory, BExpParser.idlBooleanParser, SMTSolver.idlDpllSolver)
+    //val smt = new SMTLibInterpreter(PropositionalLogic)
+    val smt = new SMTLibInterpreter(IntegerDifferenceLogic)
 
     var line = StdIn.readLine()
     while (line != null) {
