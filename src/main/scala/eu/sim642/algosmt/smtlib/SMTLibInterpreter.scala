@@ -8,6 +8,7 @@ import scala.io.StdIn
 
 class SMTLibInterpreter {
   private val assertions: mutable.Buffer[BExp[String]] = mutable.Buffer.empty
+  private var modelOption: Option[Map[String, Boolean]] = None
 
   def execute(sexp: SExp): Option[SExp] = sexp match {
     case Application("assert", exp) =>
@@ -18,8 +19,19 @@ class SMTLibInterpreter {
     case Application("check-sat") =>
       val bexp = assertions.reduce(And(_, _))
       val cnf = CNFConverter.convertFlat(bexp)
-      val modelOption = SMTSolver.pureDpllSolver.solve(cnf)
+      modelOption = SMTSolver.pureDpllSolver.solve(cnf)
       Some(Atom(modelOption.map(model => "sat").getOrElse("unsat")))
+
+    case Application("get-model") =>
+      modelOption match {
+        case Some(model) =>
+          // TODO: non-standard get-model, more like get-value for all variables
+          Some(Compound(model.map({ case (variable, value) => Compound(Atom(variable), Atom(value.toString)) }).toSeq: _*))
+
+        case None =>
+          println("Model error")
+          None
+      }
 
     case exp =>
       println(s"Match error: $exp")
