@@ -6,6 +6,13 @@ import eu.sim642.algosmt.smtlib.{Application, Atom, SExp}
 object IDLParser extends BExpParser[Constraint[String]] {
 
   object IntAtom {
+    def apply(n: Int): SExp = {
+      if (n < 0)
+        Application("-", Atom((-n).toString))
+      else
+        Atom(n.toString)
+    }
+
     def unapply(sexp: SExp): Option[Int] = sexp match {
       case Atom(n) => Some(n.toInt)
       case Application("-", Atom(n)) => Some(-n.toInt)

@@ -54,7 +54,7 @@ class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) {
       modelOption match {
         case Some(model) =>
           // TODO: non-standard get-model, more like get-value for all variables
-          Right(Some(Compound(model.map({ case (variable, value) => Compound(Atom(variable.toString), Atom(value.toString)) }).toSeq: _*)))
+          Right(Some(Compound(model.map({ case (variable, value) => logic.toSExp(variable, value) }).toSeq: _*)))
 
         case None =>
           Left("Model error")
