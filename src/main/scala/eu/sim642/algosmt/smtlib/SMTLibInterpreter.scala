@@ -33,11 +33,7 @@ class SMTLibInterpreter[A, B, C](private val theory: Theory, private val parser:
 
   def execute(sexp: SExp): Either[String, Option[SExp]] = sexp match {
     case Application("assert", exp) =>
-      println(s"Before preprocess: $exp")
-      val exp2 = preprocess(exp)
-      println(s"After preprocess: $exp2")
-
-      val bexp = parser.fromSExp(exp2)
+      val bexp = parser.fromSExp(preprocess(exp))
       assertions += bexp
       Right(None)
 
