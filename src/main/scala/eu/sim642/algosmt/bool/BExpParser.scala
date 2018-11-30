@@ -42,6 +42,6 @@ object BExpParser {
 
   def main(args: Array[String]): Unit = {
     println(pureBooleanParser.parse("(and p q)"))
-    println(idlBooleanParser.parse("(and (<= (- x1 x2) 2) (<= (- x2 x3) 1))"))
+    println(idlBooleanParser.parse("(and (<= (- x1 x2) 2) (<= (- x2 x3) (- 1)))"))
   }
 }
