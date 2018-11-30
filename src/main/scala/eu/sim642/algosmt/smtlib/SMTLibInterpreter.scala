@@ -1,7 +1,8 @@
 package eu.sim642.algosmt.smtlib
 
 import eu.sim642.algosmt.bool.{And, BExp, BExpParser, CNFConverter}
-import eu.sim642.algosmt.smt.{CoreTheory, IntTheory, SMTSolver, Theory}
+import eu.sim642.algosmt.smt.SMTSolver
+import eu.sim642.algosmt.theory.{CoreTheory, IntTheory, Theory}
 
 import scala.collection.mutable
 import scala.io.StdIn
