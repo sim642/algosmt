@@ -1,4 +1,4 @@
-package eu.sim642.algosmt.bool
+package eu.sim642.algosmt.core
 
 import org.scalatest.FunSuite
 

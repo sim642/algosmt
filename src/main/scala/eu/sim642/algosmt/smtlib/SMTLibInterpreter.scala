@@ -1,6 +1,6 @@
 package eu.sim642.algosmt.smtlib
 
-import eu.sim642.algosmt.bool._
+import eu.sim642.algosmt.core._
 import eu.sim642.algosmt.logic.Logic
 import eu.sim642.algosmt.logic.idl.IntegerDifferenceLogic
 import eu.sim642.algosmt.logic.pl.PropositionalLogic
@@ -11,7 +11,7 @@ import scala.io.StdIn
 
 class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) {
   private val theory = logic.theory
-  private val parser = BooleanBExpParser(logic.parser)
+  private val parser = logic.parser
   private val solver = new DPLLSMTSolver(logic.solver)
 
   private val assertions: mutable.Buffer[BExp[A]] = mutable.Buffer.empty

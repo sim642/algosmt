@@ -1,6 +1,6 @@
 package eu.sim642.algosmt.logic.idl
 
-import eu.sim642.algosmt.bool.Var
+import eu.sim642.algosmt.core.Var
 
 object IDLDemo extends IDLSolver[String] {
 

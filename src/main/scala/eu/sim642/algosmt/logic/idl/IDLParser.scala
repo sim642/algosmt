@@ -1,6 +1,6 @@
 package eu.sim642.algosmt.logic.idl
 
-import eu.sim642.algosmt.bool._
+import eu.sim642.algosmt.core._
 import eu.sim642.algosmt.smtlib.{Application, Atom, SExp}
 
 object IDLParser extends BExpParser[Constraint[String]] {
