@@ -1,6 +1,7 @@
 package eu.sim642.algosmt.bool
 
-import eu.sim642.algosmt.idl.IDLConstraintBExpParser
+import eu.sim642.algosmt.logic.idl.IDLParser
+import eu.sim642.algosmt.logic.pl.VarParser
 import eu.sim642.algosmt.smtlib._
 
 trait BExpParser[A] {
@@ -21,12 +22,6 @@ trait BExpParser[A] {
   }
 }
 
-object VarBExpParser extends BExpParser[String] {
-  override def fromSExp(sexp: SExp): BExp[String] = sexp match {
-    case Atom(str) => Var(str)
-  }
-}
-
 case class BooleanBExpParser[A](delegate: BExpParser[A]) extends BExpParser[A] {
   def fromSExp(sexp: SExp): BExp[A] = sexp match {
     case Application("not", exp) => Not(fromSExp(exp))
@@ -37,8 +32,8 @@ case class BooleanBExpParser[A](delegate: BExpParser[A]) extends BExpParser[A] {
 }
 
 object BExpParser {
-  val pureBooleanParser = BooleanBExpParser(VarBExpParser)
-  val idlBooleanParser = BooleanBExpParser(IDLConstraintBExpParser)
+  val pureBooleanParser = BooleanBExpParser(VarParser)
+  val idlBooleanParser = BooleanBExpParser(IDLParser)
 
   def main(args: Array[String]): Unit = {
     println(pureBooleanParser.parse("(and p q)"))

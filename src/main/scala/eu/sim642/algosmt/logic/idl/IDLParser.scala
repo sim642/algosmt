@@ -1,10 +1,9 @@
-package eu.sim642.algosmt.idl
+package eu.sim642.algosmt.logic.idl
 
 import eu.sim642.algosmt.bool._
-import eu.sim642.algosmt.idl.IDL.Constraint
-import eu.sim642.algosmt.smtlib._
+import eu.sim642.algosmt.smtlib.{Application, Atom, SExp}
 
-object IDLConstraintBExpParser extends BExpParser[Constraint[String]] {
+object IDLParser extends BExpParser[Constraint[String]] {
 
   object IntAtom {
     def unapply(sexp: SExp): Option[Int] = sexp match {

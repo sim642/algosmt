@@ -1,4 +1,4 @@
-package eu.sim642.algosmt.idl
+package eu.sim642.algosmt.logic.idl
 
 import scala.collection.mutable
 
