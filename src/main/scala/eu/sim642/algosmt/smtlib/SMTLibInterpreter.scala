@@ -18,7 +18,7 @@ class SMTLibInterpreter {
     case Application("check-sat") =>
       val bexp = assertions.toSeq.reduce(And(_, _))
       val cnf = CNFConverter.convertFlat(bexp)
-      val modelOption = SMTSolver.pureBruteForceSolver.solve(cnf)
+      val modelOption = SMTSolver.pureDpllSolver.solve(cnf)
       Some(Atom(modelOption.map(model => "sat").getOrElse("unsat")))
   }
 

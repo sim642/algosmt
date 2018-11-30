@@ -10,11 +10,13 @@ trait SMTSolver[A, B, C] {
 }
 
 object SMTSolver {
-  val pureBruteForceSolver = new BruteForceSMTSolver(new PureTheorySolver[String])
-  val idlBruteForceSolver = new BruteForceSMTSolver(new IDLTheorySolver[String])
+  //val pureBruteForceSolver = new BruteForceSMTSolver(new PureTheorySolver[String])
+  //val idlBruteForceSolver = new BruteForceSMTSolver(new IDLTheorySolver[String])
+  val pureDpllSolver = new DPLLSMTSolver(new PureTheorySolver[String])
+  val idlDpllSolver = new DPLLSMTSolver(new IDLTheorySolver[String])
 
   def main(args: Array[String]): Unit = {
-    println(idlBruteForceSolver.solve(List(
+    println(idlDpllSolver.solve(List(
       List(Constraint("x1", "x2", 2)),
       List(Constraint("x2", "x3", 1)),
       List(Constraint("x3", "x1", -4), Constraint("x3", "x1", -1)),
