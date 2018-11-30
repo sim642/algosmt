@@ -6,27 +6,27 @@ import eu.sim642.algosmt.smt.SMTSolver
 import scala.collection.mutable
 import scala.io.StdIn
 
-class SMTLibInterpreter {
-  private val assertions: mutable.Buffer[BExp[String]] = mutable.Buffer.empty
-  private var modelOption: Option[Map[String, Boolean]] = None
+class SMTLibInterpreter[A, B, C](private val parser: BExpParser[A], private val solver: SMTSolver[A, B, C]) {
+  private val assertions: mutable.Buffer[BExp[A]] = mutable.Buffer.empty
+  private var modelOption: Option[Map[B, C]] = None
 
   def execute(sexp: SExp): Option[SExp] = sexp match {
     case Application("assert", exp) =>
-      val bexp = BExpParser.pureBooleanParser.fromSExp(exp)
+      val bexp = parser.fromSExp(exp)
       assertions += bexp
       None
 
     case Application("check-sat") =>
       val bexp = assertions.reduce(And(_, _))
       val cnf = CNFConverter.convertFlat(bexp)
-      modelOption = SMTSolver.pureDpllSolver.solve(cnf)
+      modelOption = solver.solve(cnf)
       Some(Atom(modelOption.map(model => "sat").getOrElse("unsat")))
 
     case Application("get-model") =>
       modelOption match {
         case Some(model) =>
           // TODO: non-standard get-model, more like get-value for all variables
-          Some(Compound(model.map({ case (variable, value) => Compound(Atom(variable), Atom(value.toString)) }).toSeq: _*))
+          Some(Compound(model.map({ case (variable, value) => Compound(Atom(variable.toString), Atom(value.toString)) }).toSeq: _*))
 
         case None =>
           println("Model error")
@@ -50,7 +50,8 @@ class SMTLibInterpreter {
 
 object SMTLibInterpreter {
   def main(args: Array[String]): Unit = {
-    val smt = new SMTLibInterpreter
+    //val smt = new SMTLibInterpreter(BExpParser.pureBooleanParser, SMTSolver.pureDpllSolver)
+    val smt = new SMTLibInterpreter(BExpParser.idlBooleanParser, SMTSolver.idlDpllSolver)
 
     var line = StdIn.readLine()
     while (line != null) {
