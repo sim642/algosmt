@@ -10,40 +10,37 @@ class SMTLibInterpreter[A, B, C](private val parser: BExpParser[A], private val 
   private val assertions: mutable.Buffer[BExp[A]] = mutable.Buffer.empty
   private var modelOption: Option[Map[B, C]] = None
 
-  def execute(sexp: SExp): Option[SExp] = sexp match {
+  def execute(sexp: SExp): Either[String, Option[SExp]] = sexp match {
     case Application("assert", exp) =>
       val bexp = parser.fromSExp(exp)
       assertions += bexp
-      None
+      Right(None)
 
     case Application("check-sat") =>
       val bexp = assertions.reduce(And(_, _))
       val cnf = CNFConverter.convertFlat(bexp)
       modelOption = solver.solve(cnf)
-      Some(Atom(modelOption.map(model => "sat").getOrElse("unsat")))
+      Right(Some(Atom(modelOption.map(model => "sat").getOrElse("unsat"))))
 
     case Application("get-model") =>
       modelOption match {
         case Some(model) =>
           // TODO: non-standard get-model, more like get-value for all variables
-          Some(Compound(model.map({ case (variable, value) => Compound(Atom(variable.toString), Atom(value.toString)) }).toSeq: _*))
+          Right(Some(Compound(model.map({ case (variable, value) => Compound(Atom(variable.toString), Atom(value.toString)) }).toSeq: _*)))
 
         case None =>
-          println("Model error")
-          None
+          Left("Model error")
       }
 
     case exp =>
-      println(s"Match error: $exp")
-      None
+      Left(s"Match error: $exp")
   }
 
-  def execute(in: CharSequence): Option[SExp] = {
+  def execute(in: CharSequence): Either[String, Option[SExp]] = {
     SExpParser.parse(in) match {
       case SExpParser.Success(result, next) => execute(result)
       case SExpParser.NoSuccess(msg, next) =>
-        println(s"Parse error: $msg")
-        None
+        Left(s"Parse error: $msg")
     }
   }
 }
@@ -55,9 +52,11 @@ object SMTLibInterpreter {
 
     var line = StdIn.readLine()
     while (line != null) {
-      val outOption = smt.execute(line)
-      if (outOption.isDefined)
-        println(outOption.get)
+      smt.execute(line) match {
+        case Left(error) => Console.err.println(error)
+        case Right(None) =>
+        case Right(Some(sexp)) => println(sexp)
+      }
       line = StdIn.readLine()
     }
   }
