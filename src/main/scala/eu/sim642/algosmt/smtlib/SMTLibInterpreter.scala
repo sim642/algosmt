@@ -20,12 +20,18 @@ class SMTLibInterpreter {
       val cnf = CNFConverter.convertFlat(bexp)
       val modelOption = SMTSolver.pureDpllSolver.solve(cnf)
       Some(Atom(modelOption.map(model => "sat").getOrElse("unsat")))
+
+    case exp =>
+      println(s"Match error: $exp")
+      None
   }
 
   def execute(in: CharSequence): Option[SExp] = {
     SExpParser.parse(in) match {
       case SExpParser.Success(result, next) => execute(result)
-      case SExpParser.NoSuccess(msg, next) => throw new RuntimeException(msg)
+      case SExpParser.NoSuccess(msg, next) =>
+        println(s"Parse error: $msg")
+        None
     }
   }
 }
