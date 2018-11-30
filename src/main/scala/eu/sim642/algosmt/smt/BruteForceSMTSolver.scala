@@ -5,7 +5,7 @@ import eu.sim642.algosmt.{Literal, NegLiteral, PosLiteral}
 
 import eu.sim642.algosmt.SimSat.HeadIterator
 
-class BruteForceSMTSolver[A, B, C](theorySolver: TheorySolver[A, B, C]) extends SMTSolver[A, B, C] {
+class BruteForceSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SMTSolver[A, B, C] {
 
   override def solve(cnf: CNF[A]): Option[Map[B, C]] = {
     val variables = extractVariables(cnf)
@@ -16,6 +16,6 @@ class BruteForceSMTSolver[A, B, C](theorySolver: TheorySolver[A, B, C]) extends 
       literals = (posLiterals ++ negLiterals).toSet[Literal[A]]
       if evaluate(cnf, literals)
     } yield literals
-    goodLiterals.flatMap(theorySolver.solve).headOption
+    goodLiterals.flatMap(logicSolver.solve).headOption
   }
 }

@@ -1,22 +1,21 @@
 package eu.sim642.algosmt.smt
 
-import eu.sim642.algosmt.Literal
-import eu.sim642.algosmt.SimSat.{CNF, extractVariables, findPure, simplify, toLiteral}
+import eu.sim642.algosmt.SimSat.{CNF, extractVariables, simplify, toLiteral}
 
-class DPLLSMTSolver[A, B, C](theorySolver: TheorySolver[A, B, C]) extends SMTSolver[A, B, C] {
+class DPLLSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SMTSolver[A, B, C] {
 
   override def solve(cnf: CNF[A]): Option[Map[B, C]] = solve(cnf, Set.empty)
 
-  private def solve(cnf: CNF[A], literals: Set[Literal[A]]): Option[Map[B, C]] = {
+  private def solve(cnf: CNF[A], model: Model[A]): Option[Map[B, C]] = {
     if (cnf.isEmpty)
-      return theorySolver.solve(literals)
+      return logicSolver.solve(model)
     else if (cnf.exists(_.isEmpty))
       return None
 
     // unit propagation
     cnf.find(_.size == 1).map(_.head) match {
       case Some(unitLiteral) =>
-        return solve(simplify(cnf, literals + unitLiteral), literals + unitLiteral)
+        return solve(simplify(cnf, model + unitLiteral), model + unitLiteral)
       case None =>
     }
 
@@ -30,6 +29,6 @@ class DPLLSMTSolver[A, B, C](theorySolver: TheorySolver[A, B, C]) extends SMTSol
 
     // splitting
     val variable = extractVariables(cnf).head
-    solve(simplify(cnf, literals + variable), literals + variable) orElse solve(simplify(cnf, literals + variable.neg), literals + variable.neg)
+    solve(simplify(cnf, model + variable), model + variable) orElse solve(simplify(cnf, model + variable.neg), model + variable.neg)
   }
 }
