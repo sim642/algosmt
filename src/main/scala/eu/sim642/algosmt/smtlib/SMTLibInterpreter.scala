@@ -1,18 +1,43 @@
 package eu.sim642.algosmt.smtlib
 
 import eu.sim642.algosmt.bool.{And, BExp, BExpParser, CNFConverter}
-import eu.sim642.algosmt.smt.SMTSolver
+import eu.sim642.algosmt.smt.{CoreTheory, IntTheory, SMTSolver, Theory}
 
 import scala.collection.mutable
 import scala.io.StdIn
 
-class SMTLibInterpreter[A, B, C](private val parser: BExpParser[A], private val solver: SMTSolver[A, B, C]) {
+class SMTLibInterpreter[A, B, C](private val theory: Theory, private val parser: BExpParser[A], private val solver: SMTSolver[A, B, C]) {
   private val assertions: mutable.Buffer[BExp[A]] = mutable.Buffer.empty
   private var modelOption: Option[Map[B, C]] = None
 
+  private def preprocess(sexp: SExp): SExp = sexp match {
+    case Application(func, args@_*) if theory.leftAssocFuncs.contains(func) && args.length > 2 =>
+      preprocess(Application(func, Application(func, args.init: _*), args.last))
+
+    case Application(func, args@_*) if theory.chainableFuncs.contains(func) && args.length > 2 =>
+      preprocess(Application("and",
+        args.zip(args.tail)
+          .map({ case (arg1, arg2) => Application(func, arg1, arg2) }): _*
+      ))
+
+    case Application(func, args@_*) if theory.pairwiseFuncs.contains(func) && args.length > 2 =>
+      val argHead +: argTail = args
+      preprocess(Application("and",
+        argTail.map(arg => Application(func, argHead, arg)) :+
+          Application(func, argTail: _*): _*
+      ))
+
+    case Atom(str) => Atom(str)
+    case Compound(exps@_*) => Compound(exps.map(preprocess): _*)
+  }
+
   def execute(sexp: SExp): Either[String, Option[SExp]] = sexp match {
     case Application("assert", exp) =>
-      val bexp = parser.fromSExp(exp)
+      println(s"Before preprocess: $exp")
+      val exp2 = preprocess(exp)
+      println(s"After preprocess: $exp2")
+
+      val bexp = parser.fromSExp(exp2)
       assertions += bexp
       Right(None)
 
@@ -47,8 +72,8 @@ class SMTLibInterpreter[A, B, C](private val parser: BExpParser[A], private val 
 
 object SMTLibInterpreter {
   def main(args: Array[String]): Unit = {
-    //val smt = new SMTLibInterpreter(BExpParser.pureBooleanParser, SMTSolver.pureDpllSolver)
-    val smt = new SMTLibInterpreter(BExpParser.idlBooleanParser, SMTSolver.idlDpllSolver)
+    //val smt = new SMTLibInterpreter(CoreTheory, BExpParser.pureBooleanParser, SMTSolver.pureDpllSolver)
+    val smt = new SMTLibInterpreter(CoreTheory + IntTheory, BExpParser.idlBooleanParser, SMTSolver.idlDpllSolver)
 
     var line = StdIn.readLine()
     while (line != null) {
