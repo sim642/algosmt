@@ -1,11 +1,13 @@
 package eu.sim642.algosmt.smt
 
-import eu.sim642.algosmt.SimSat.{CNF, evaluate, extractVariables}
-import eu.sim642.algosmt.{Literal, NegLiteral, PosLiteral}
-
-import eu.sim642.algosmt.SimSat.HeadIterator
+import eu.sim642.algosmt.smt.cnf.{CNF, Literal, NegLiteral, PosLiteral, extractVariables}
+import eu.sim642.algosmt.util.HeadIterator
 
 class BruteForceSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SMTSolver[A, B, C] {
+
+  def evaluate(cnf: CNF[A], literals: Set[Literal[A]]): Boolean = {
+    cnf.forall(_.exists(literals.contains))
+  }
 
   override def solve(cnf: CNF[A]): Option[Map[B, C]] = {
     val variables = extractVariables(cnf)

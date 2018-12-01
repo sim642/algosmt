@@ -1,8 +1,8 @@
 package eu.sim642.algosmt.logic.idl
 
 import eu.sim642.algosmt.logic.idl.BellmanFord.Edge
+import eu.sim642.algosmt.smt.cnf.{NegLiteral, PosLiteral}
 import eu.sim642.algosmt.smt.{LogicSolver, Model}
-import eu.sim642.algosmt.{NegLiteral, PosLiteral}
 
 class IDLSolver[B] extends LogicSolver[Constraint[B], B, Int] {
   override def solve(model: Model[Constraint[B]]): Option[Map[B, Int]] = {

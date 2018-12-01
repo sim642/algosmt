@@ -1,8 +1,8 @@
 package eu.sim642.algosmt.smt
 
-import eu.sim642.algosmt.SimSat.{CNF, toLiteral}
 import eu.sim642.algosmt.logic.idl.{Constraint, IDLSolver}
 import eu.sim642.algosmt.logic.pl.PropositionalSolver
+import eu.sim642.algosmt.smt.cnf.{CNF, toLiteral}
 
 trait SMTSolver[A, B, C] {
   def solve(cnf: CNF[A]): Option[Map[B, C]]

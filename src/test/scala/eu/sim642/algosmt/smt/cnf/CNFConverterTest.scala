@@ -3,7 +3,7 @@ package eu.sim642.algosmt.core
 import org.scalatest.FunSuite
 
 class CNFConverterTest extends FunSuite {
-  import CNFConverter.convert
+  import eu.sim642.algosmt.smt.cnf.CNFConverter.convert
 
   test("Converts double negation") {
     assert(convert(Not(Not(Var("x")))) == Var("x"))

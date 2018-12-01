@@ -1,7 +1,6 @@
-package eu.sim642.algosmt.core
+package eu.sim642.algosmt.smt.cnf
 
-import eu.sim642.algosmt.{NegLiteral, PosLiteral}
-import eu.sim642.algosmt.SimSat.{CNF, Disjunct}
+import eu.sim642.algosmt.core._
 
 object CNFConverter {
   def convert[A](exp: BExp[A]): BExp[A] = distribute(convertNNF(exp))

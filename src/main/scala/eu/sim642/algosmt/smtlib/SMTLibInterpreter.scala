@@ -5,6 +5,7 @@ import eu.sim642.algosmt.logic.Logic
 import eu.sim642.algosmt.logic.idl.IntegerDifferenceLogic
 import eu.sim642.algosmt.logic.pl.PropositionalLogic
 import eu.sim642.algosmt.smt.DPLLSMTSolver
+import eu.sim642.algosmt.smt.cnf.CNFConverter
 
 import scala.collection.mutable
 import scala.io.StdIn
