@@ -11,6 +11,7 @@ object IDLParser2 extends BExpParser[Constraint[String]] {
 
   def preProcess(sexp: SExp): SExp = sexp match {
     case Application(op, Atom(x), IntAtom(n)) => Application(op, Application("-", Atom(x), Atom("Z")), IntAtom(n))
+    case Application(op, IntAtom(n), Atom(x)) => Application(op, IntAtom(n), Application("-", Atom(x), Atom("Z")))
     case _ => sexp
   }
 
