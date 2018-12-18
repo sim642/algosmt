@@ -4,14 +4,14 @@ import scala.language.implicitConversions
 
 package object cnf {
   // TODO: use Sets?
-  type Disjunct[A] = Seq[Literal[A]]
-  type CNF[A] = Seq[Disjunct[A]]
+  type Disjunct[A] = Set[Literal[A]]
+  type CNF[A] = Set[Disjunct[A]]
 
   def extractVariables[A](cnf: CNF[A]): Set[A] = {
-    (for {
+    for {
       clause <- cnf
       literal <- clause
-    } yield literal.variable).toSet
+    } yield literal.variable
   }
 
   implicit def toLiteral[A](variable: A): PosLiteral[A] = PosLiteral(variable)

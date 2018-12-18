@@ -32,13 +32,13 @@ object CNFConverter {
   def convertFlat[A](exp: BExp[A]): CNF[A] = flattenCNF(convert(exp))
 
   private def flattenDisjunct[A](exp: BExp[A]): Disjunct[A] = exp match {
-    case Var(name) => Vector(PosLiteral(name))
-    case Not(Var(name)) => Vector(NegLiteral(name))
+    case Var(name) => Set(PosLiteral(name))
+    case Not(Var(name)) => Set(NegLiteral(name))
     case Or(left, right) => flattenDisjunct(left) ++ flattenDisjunct(right)
   }
 
   private def flattenCNF[A](exp: BExp[A]): CNF[A] = exp match {
     case And(left, right) => flattenCNF(left) ++ flattenCNF(right)
-    case exp => Vector(flattenDisjunct(exp))
+    case exp => Set(flattenDisjunct(exp))
   }
 }

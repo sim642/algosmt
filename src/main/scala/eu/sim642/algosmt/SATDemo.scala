@@ -9,7 +9,7 @@ object SATDemo {
 
   def solveAll[A](satSolve: CNF[A] => Option[Set[Literal[A]]])(cnf: CNF[A]): List[Set[Literal[A]]] = {
     Stream.unfold(cnf) { cnf =>
-      satSolve(cnf).map(solution => (solution.map(_.neg).toList +: cnf, solution))
+      satSolve(cnf).map(solution => (cnf + solution.map(_.neg), solution))
     }.toList
   }
 
@@ -17,55 +17,55 @@ object SATDemo {
     val bruteForce = new BruteForceSMTSolver(new PropositionalSolver[Char]).solve(_)
     val dpll = new DPLLSMTSolver(new PropositionalSolver[Char]).solve(_)
 
-    val cnf1: CNF[Char] = List(
-      List('P', 'Q', 'R'.neg),
-      List('P', 'Q'.neg),
-      List('P'.neg),
-      List('R'),
-      List('U')
+    val cnf1: CNF[Char] = Set(
+      Set('P', 'Q', 'R'.neg),
+      Set('P', 'Q'.neg),
+      Set('P'.neg),
+      Set('R'),
+      Set('U')
     )
 
-    val cnf2: CNF[Char] = List(
-      List('P', 'Q'),
-      List('Q'.neg),
-      List('P'.neg, 'Q', 'R'.neg)
+    val cnf2: CNF[Char] = Set(
+      Set('P', 'Q'),
+      Set('Q'.neg),
+      Set('P'.neg, 'Q', 'R'.neg)
     )
 
-    val cnf3: CNF[Char] = List(
-      List('P', 'Q'),
-      List('P', 'Q'.neg),
-      List('P'.neg, 'Q'),
-      List('P'.neg, 'R'.neg),
+    val cnf3: CNF[Char] = Set(
+      Set('P', 'Q'),
+      Set('P', 'Q'.neg),
+      Set('P'.neg, 'Q'),
+      Set('P'.neg, 'R'.neg),
     )
 
-    val cnf4: CNF[Char] = List(
-      List('P', 'Q'.neg),
-      List('P'.neg, 'R'),
-      List('Q')
+    val cnf4: CNF[Char] = Set(
+      Set('P', 'Q'.neg),
+      Set('P'.neg, 'R'),
+      Set('Q')
     )
 
-    val cnf5: CNF[Char] = List(
-      List('p', 'q'),
-      List('p'.neg, 'q'),
-      List('r'.neg, 'q'.neg),
-      List('r', 'q'.neg),
+    val cnf5: CNF[Char] = Set(
+      Set('p', 'q'),
+      Set('p'.neg, 'q'),
+      Set('r'.neg, 'q'.neg),
+      Set('r', 'q'.neg),
     )
 
-    val cnf6: CNF[Char] = List(
-      List('p', 'q', 'r'),
-      List('p'.neg, 'q'.neg, 'r'.neg),
-      List('p'.neg, 'q', 'r'),
-      List('q'.neg, 'r'),
-      List('q', 'r'.neg),
+    val cnf6: CNF[Char] = Set(
+      Set('p', 'q', 'r'),
+      Set('p'.neg, 'q'.neg, 'r'.neg),
+      Set('p'.neg, 'q', 'r'),
+      Set('q'.neg, 'r'),
+      Set('q', 'r'.neg),
     )
 
-    val cnf7: CNF[Char] = List(
-      List('q'.neg, 'p'),
-      List('p'.neg, 'q'.neg),
-      List('q', 'r'),
-      List('q'.neg, 'r'.neg),
-      List('p'.neg, 'r'.neg),
-      List('p', 'r'.neg)
+    val cnf7: CNF[Char] = Set(
+      Set('q'.neg, 'p'),
+      Set('p'.neg, 'q'.neg),
+      Set('q', 'r'),
+      Set('q'.neg, 'r'.neg),
+      Set('p'.neg, 'r'.neg),
+      Set('p', 'r'.neg)
     )
 
     println("bruteForce")

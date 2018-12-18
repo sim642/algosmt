@@ -15,10 +15,10 @@ object SMTSolver {
   val idlDpllSolver = new DPLLSMTSolver(new IDLSolver[String])
 
   def main(args: Array[String]): Unit = {
-    println(idlDpllSolver.solve(List(
-      List(Constraint("x1", "x2", 2)),
-      List(Constraint("x2", "x3", 1)),
-      List(Constraint("x3", "x1", -4), Constraint("x3", "x1", -1)),
+    println(idlDpllSolver.solve(Set(
+      Set(Constraint("x1", "x2", 2)),
+      Set(Constraint("x2", "x3", 1)),
+      Set(Constraint("x3", "x1", -4), Constraint("x3", "x1", -1)),
     )))
   }
 }
