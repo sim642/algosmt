@@ -8,7 +8,7 @@ import eu.sim642.algosmt.smt.DPLLSMTSolver
 import eu.sim642.algosmt.smt.cnf.CNFConverter
 
 import scala.collection.mutable
-import scala.io.StdIn
+import scala.io.{Source, StdIn}
 
 class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) {
   private val theory = logic.theory
@@ -80,14 +80,14 @@ object SMTLibInterpreter {
     //val smt = new SMTLibInterpreter(IntegerDifferenceLogic)
     val smt = new SMTLibInterpreter(IntegerDifferenceLogic2)
 
-    var line = StdIn.readLine()
-    while (line != null) {
+    //val source = Source.stdin
+    val source = Source.fromFile("zebra2.smt2")
+    for (line <- source.getLines()) {
       smt.execute(line) match {
         case Left(error) => Console.err.println(error)
         case Right(None) =>
         case Right(Some(sexp)) => println(sexp)
       }
-      line = StdIn.readLine()
     }
   }
 }
