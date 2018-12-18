@@ -22,6 +22,8 @@ class DPLLSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SMTSolve
       return logicSolver.solve(model)
     else if (cnf.exists(_.isEmpty))
       return None
+    else if (logicSolver.solve(model).isEmpty)
+      return None
 
     // unit propagation
     cnf.find(_.size == 1).map(_.head) match {
