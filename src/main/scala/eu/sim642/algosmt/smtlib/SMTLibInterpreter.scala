@@ -65,11 +65,16 @@ class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) {
       Left(s"Match error: $exp")
   }
 
-  def execute(in: CharSequence): Either[String, Option[SExp]] = {
-    SExpParser.parse(in) match {
-      case SExpParser.Success(result, next) => execute(result)
-      case SExpParser.NoSuccess(msg, next) =>
-        Left(s"Parse error: $msg")
+  def execute(in: String): Either[String, Option[SExp]] = {
+    val in2 = in.takeWhile(_ != '#')
+    if (in2.trim.isEmpty)
+      Right(None)
+    else {
+      SExpParser.parse(in2) match {
+        case SExpParser.Success(result, next) => execute(result)
+        case SExpParser.NoSuccess(msg, next) =>
+          Left(s"Parse error $in2: $msg ($next)")
+      }
     }
   }
 }
