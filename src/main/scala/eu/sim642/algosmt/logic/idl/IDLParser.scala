@@ -3,6 +3,8 @@ package eu.sim642.algosmt.logic.idl
 import eu.sim642.algosmt.core._
 import eu.sim642.algosmt.smtlib.{Application, Atom, SExp}
 
+import scala.util.Try
+
 object IDLParser extends BExpParser[Constraint[String]] {
 
   object IntAtom {
@@ -14,8 +16,8 @@ object IDLParser extends BExpParser[Constraint[String]] {
     }
 
     def unapply(sexp: SExp): Option[Int] = sexp match {
-      case Atom(n) => Some(n.toInt)
-      case Application("-", Atom(n)) => Some(-n.toInt)
+      case Atom(n) => Try(n.toInt).toOption
+      case Application("-", Atom(n)) => Try(-n.toInt).toOption
       case _ => None
     }
   }
