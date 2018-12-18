@@ -1,3 +1,5 @@
+(set-info :status sat)
+
 (assert (distinct baker cooper fletcher miller smith))
 
 (assert (<= 1 baker 5))

@@ -1,3 +1,5 @@
+(set-info :status sat)
+
 (assert (distinct x1 x2 x3 x4))
 
 (assert (<= 1 x1 4))

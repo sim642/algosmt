@@ -1,3 +1,5 @@
+(set-info :status sat)
+
 (assert (distinct betty ethel joan kitty mary))
 
 (assert (<= 1 betty 5))

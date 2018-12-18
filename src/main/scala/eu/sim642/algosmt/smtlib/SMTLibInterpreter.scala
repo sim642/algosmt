@@ -10,7 +10,11 @@ import eu.sim642.algosmt.smt.cnf.CNFConverter
 import scala.collection.mutable
 import scala.io.{Source, StdIn}
 
-class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) {
+trait SMTLibInterpreterLike {
+  def execute(sexp: SExp): Either[String, Option[SExp]]
+}
+
+class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) extends SMTLibInterpreterLike {
   private val theory = logic.theory
   private val parser = logic.parser
   private val solver = new DPLLSMTSolver(logic.solver)
@@ -83,14 +87,39 @@ class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) {
   }
 }
 
+trait SetInfoStatus extends SMTLibInterpreterLike {
+  private var expectedStatusOption: Option[SExp] = None
+
+  abstract override def execute(sexp: SExp): Either[String, Option[SExp]] = sexp match {
+    case Application("set-info", Atom(":status"), status) =>
+      expectedStatusOption = Some(status)
+      Right(None)
+
+    case Application("check-sat") =>
+      expectedStatusOption match {
+        case Some(expectedStatus) =>
+          super.execute(sexp) match {
+            case ret@Right(Some(status)) if status == expectedStatus =>
+              ret
+            case ret =>
+              Left(s"Expected status $expectedStatus but got $ret")
+          }
+        case None =>
+          super.execute(sexp)
+      }
+
+    case _ => super.execute(sexp)
+  }
+}
+
 object SMTLibInterpreter {
   def main(args: Array[String]): Unit = {
     //val smt = new SMTLibInterpreter(PropositionalLogic)
     //val smt = new SMTLibInterpreter(IntegerDifferenceLogic)
-    val smt = new SMTLibInterpreter(IntegerDifferenceLogic2)
+    val smt = new SMTLibInterpreter(IntegerDifferenceLogic2) with SetInfoStatus
 
     //val source = Source.stdin
-    val source = Source.fromFile("nqueens4.smt2")
+    val source = Source.fromFile("dinesman.smt2")
     for (line <- source.getLines()) {
       smt.execute(line) match {
         case Left(error) => Console.err.println(error)

@@ -1,3 +1,5 @@
+(set-info :status sat)
+
 (assert (distinct yellow blue red ivory green))
 (assert (distinct norwegian ukrainian englishman spaniard japanese))
 (assert (distinct water tea milk orangejuice coffee))

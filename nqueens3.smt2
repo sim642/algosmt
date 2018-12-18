@@ -1,3 +1,5 @@
+(set-info :status unsat)
+
 (assert (distinct x1 x2 x3))
 
 (assert (<= 1 x1 3))
@@ -14,4 +16,3 @@
 (assert (distinct (- x3 x1) 2))
 
 (check-sat)
-(get-model)
