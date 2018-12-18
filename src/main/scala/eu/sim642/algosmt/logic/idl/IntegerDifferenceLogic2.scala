@@ -21,8 +21,12 @@ object IDLParser2 extends BExpParser[Constraint[String]] {
 class IDLSolver2 extends IDLSolver[String] {
   override def solve(model: Model[Constraint[String]]): Option[Map[String, Int]] = {
     super.solve(model).map({ solution =>
-      val zero = solution("Z")
-      solution.mapValues(_ - zero) - "Z"
+      if (solution.contains("Z")) {
+        val zero = solution("Z")
+        solution.mapValues(_ - zero) - "Z"
+      }
+      else
+        solution
     })
   }
 }
