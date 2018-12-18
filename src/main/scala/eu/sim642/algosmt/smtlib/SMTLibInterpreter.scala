@@ -48,7 +48,11 @@ class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) {
     case Application("check-sat") =>
       val bexp = assertions.reduce(And(_, _))
       val cnf = CNFConverter.convertFlat(bexp)
+      val startTime = System.nanoTime()
       modelOption = solver.solve(cnf)
+      val endTime = System.nanoTime()
+      val duration = endTime - startTime
+      Console.err.println(s"Solved in ${duration / 1000000000.0} s")
       Right(Some(Atom(modelOption.map(model => "sat").getOrElse("unsat"))))
 
     case Application("get-model") =>
