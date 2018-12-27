@@ -11,7 +11,7 @@ import scala.collection.mutable
 import scala.io.{Source, StdIn}
 
 trait SMTLibInterpreterLike {
-  def execute(sexp: SExp): Either[String, Option[SExp]]
+  def execute(sexp: SExp): Seq[Either[String, SExp]]
 }
 
 class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) extends SMTLibInterpreterLike {
@@ -43,11 +43,11 @@ class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) extends SMTLibInterprete
     case Compound(exps@_*) => Compound(exps.map(preprocess): _*)
   }
 
-  def execute(sexp: SExp): Either[String, Option[SExp]] = sexp match {
+  def execute(sexp: SExp): Seq[Either[String, SExp]] = sexp match {
     case Application("assert", exp) =>
       val bexp = parser.fromSExp(preprocess(exp))
       assertions += bexp
-      Right(None)
+      Seq.empty
 
     case Application("check-sat") =>
       val bexp = assertions.reduce(And(_, _))
@@ -56,32 +56,34 @@ class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) extends SMTLibInterprete
       modelOption = solver.solve(cnf)
       val endTime = System.nanoTime()
       val duration = endTime - startTime
-      Console.err.println(s"Solved in ${duration / 1000000000.0} s")
-      Right(Some(Atom(modelOption.map(model => "sat").getOrElse("unsat"))))
+      Seq(
+        Left(s"Solved in ${duration / 1000000000.0} s"),
+        Right(Atom(modelOption.map(model => "sat").getOrElse("unsat")))
+      )
 
     case Application("get-model") =>
       modelOption match {
         case Some(model) =>
           // TODO: non-standard get-model, more like get-value for all variables
-          Right(Some(Compound(model.map({ case (variable, value) => logic.toSExp(variable, value) }).toSeq: _*)))
+          Seq(Right(Compound(model.map({ case (variable, value) => logic.toSExp(variable, value) }).toSeq: _*)))
 
         case None =>
-          Left("Model error")
+          Seq(Left("Model error"))
       }
 
     case exp =>
-      Left(s"Match error: $exp")
+      Seq(Left(s"Match error: $exp"))
   }
 
-  def execute(in: String): Either[String, Option[SExp]] = {
+  def execute(in: String): Seq[Either[String, SExp]] = {
     val in2 = in.takeWhile(_ != '#')
     if (in2.trim.isEmpty)
-      Right(None)
+      Seq.empty
     else {
       SExpParser.parse(in2) match {
         case SExpParser.Success(result, next) => execute(result)
         case SExpParser.NoSuccess(msg, next) =>
-          Left(s"Parse error $in2: $msg ($next)")
+          Seq(Left(s"Parse error $in2: $msg ($next)"))
       }
     }
   }
@@ -90,20 +92,19 @@ class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) extends SMTLibInterprete
 trait SetInfoStatus extends SMTLibInterpreterLike {
   private var expectedStatusOption: Option[SExp] = None
 
-  abstract override def execute(sexp: SExp): Either[String, Option[SExp]] = sexp match {
+  abstract override def execute(sexp: SExp): Seq[Either[String, SExp]] = sexp match {
     case Application("set-info", Atom(":status"), status) =>
       expectedStatusOption = Some(status)
-      Right(None)
+      Seq.empty
 
     case Application("check-sat") =>
       expectedStatusOption match {
         case Some(expectedStatus) =>
-          super.execute(sexp) match {
-            case ret@Right(Some(status)) if status == expectedStatus =>
-              ret
-            case ret =>
-              Left(s"Expected status $expectedStatus but got $ret")
-          }
+          val superRet = super.execute(sexp)
+          if (superRet.exists(_.toOption == expectedStatusOption))
+            superRet
+          else
+            superRet :+ Left(s"Expected status $expectedStatus")
         case None =>
           super.execute(sexp)
       }
@@ -121,11 +122,10 @@ object SMTLibInterpreter {
     //val source = Source.stdin
     val source = Source.fromFile("dinesman.smt2")
     for (line <- source.getLines()) {
-      smt.execute(line) match {
+      smt.execute(line).foreach({
         case Left(error) => Console.err.println(error)
-        case Right(None) =>
-        case Right(Some(sexp)) => println(sexp)
-      }
+        case Right(sexp) => println(sexp)
+      })
     }
   }
 }
