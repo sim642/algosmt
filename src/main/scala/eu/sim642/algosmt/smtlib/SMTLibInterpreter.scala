@@ -120,7 +120,7 @@ object SMTLibInterpreter {
     val smt = new SMTLibInterpreter(IntegerDifferenceLogic2) with SetInfoStatus
 
     //val source = Source.stdin
-    val source = Source.fromFile("dinesman.smt2")
+    val source = Source.fromFile("example/dinesman.smt2")
     for (line <- source.getLines()) {
       smt.execute(line).foreach({
         case Left(error) => Console.err.println(error)
