@@ -10,7 +10,7 @@ object BellmanFord {
     bellmanFord(vertices, edges, Map(source -> 0))
   }
 
-  def bellmanFord[A](vertices: Set[A], edges: Set[Edge[A]], initialDistance: Map[A, Weight]): Option[Map[A, Weight]] = {
+  def bellmanFord[A](vertices: Set[A], edges: Set[Edge[A]], initialDistance: TraversableOnce[(A, Weight)]): Option[Map[A, Weight]] = {
     // https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm#Algorithm
 
     // step 1: initialize graph

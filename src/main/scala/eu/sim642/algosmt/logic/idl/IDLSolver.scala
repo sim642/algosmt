@@ -17,7 +17,7 @@ class IDLSolver[B] extends LogicSolver[Constraint[B], B, Int] {
   def solve(variables: Set[B], constraints: Set[Constraint[B]]): Option[Map[B, Int]] = {
     val vertices: Set[B] = variables
     val edges: Set[Edge[B]] = constraints.map({ case Constraint(x, y, n) => (y, n, x) })
-    val initialDistance: Map[B, Int] = variables.view.map(_ -> 0).toMap
+    val initialDistance: TraversableOnce[(B, Int)] = variables.view.map(_ -> 0)
 
     BellmanFord.bellmanFord(vertices, edges, initialDistance)
   }
