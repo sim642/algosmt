@@ -7,11 +7,14 @@ object BellmanFord {
   type Edge[A] = (A, Weight, A)
 
   def bellmanFord[A](vertices: Set[A], edges: Set[Edge[A]], source: A): Option[Map[A, Weight]] = {
+    bellmanFord(vertices, edges, Map(source -> 0))
+  }
+
+  def bellmanFord[A](vertices: Set[A], edges: Set[Edge[A]], initialDistance: Map[A, Weight]): Option[Map[A, Weight]] = {
     // https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm#Algorithm
 
     // step 1: initialize graph
-    val distance: mutable.Map[A, Weight] = mutable.Map.empty
-    distance(source) = 0
+    val distance: mutable.Map[A, Weight] = mutable.Map.empty ++ initialDistance // mutable.Map(initialDistance.toSeq: _*)
 
     // step 2: relax edges repeatedly
     for {

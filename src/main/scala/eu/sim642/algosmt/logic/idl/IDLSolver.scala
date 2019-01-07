@@ -15,21 +15,11 @@ class IDLSolver[B] extends LogicSolver[Constraint[B], B, Int] {
   }
 
   def solve(variables: Set[B], constraints: Set[Constraint[B]]): Option[Map[B, Int]] = {
-    sealed trait ConstraintVertex
-    case object SourceVertex extends ConstraintVertex
-    case class VariableVertex(x: B) extends ConstraintVertex
+    val vertices: Set[B] = variables
+    val edges: Set[Edge[B]] = constraints.map({ case Constraint(x, y, n) => (y, n, x) })
+    val initialDistance: Map[B, Int] = variables.view.map(_ -> 0).toMap
 
-    val vertices: Set[ConstraintVertex] = variables.map(VariableVertex).toSet[ConstraintVertex] + SourceVertex
-    val edges: Set[Edge[ConstraintVertex]] =
-      constraints.map({ case Constraint(x, y, n) => (VariableVertex(y), n, VariableVertex(x)) }) ++
-        variables.map(x => (SourceVertex, 0, VariableVertex(x)))
-
-    BellmanFord.bellmanFord(vertices, edges, SourceVertex).map({ distance =>
-      distance.flatMap({
-        case (SourceVertex, _) => None
-        case (VariableVertex(x), value) => Some(x -> value)
-      })
-    })
+    BellmanFord.bellmanFord(vertices, edges, initialDistance)
   }
 
   def extractVariables(constraints: Set[Constraint[B]]): Set[B] = {
