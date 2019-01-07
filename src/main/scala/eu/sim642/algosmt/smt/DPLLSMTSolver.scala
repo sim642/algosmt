@@ -6,14 +6,9 @@ import scala.annotation.tailrec
 
 class DPLLSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SMTSolver[A, B, C] {
 
-  override def solve(cnf: CNF[A]): Option[Map[B, C]] = solveUnitFull(cnf, Set.empty)
+  override def solve(cnf: CNF[A]): Option[Map[B, C]] = checkedSolveUnit(cnf, Set.empty)
 
-  private def propagate(cnf: CNF[A], literal: Literal[A]): CNF[A] = {
-    val negLiteral = literal.neg
-    cnf.filterNot(_.contains(literal)).map(_ - negLiteral)
-  }
-
-  private def solveUnitFull(cnf: CNF[A], model: Model[A]): Option[Map[B, C]] = {
+  private def checkedSolve(solveFunction: (CNF[A], Model[A]) => Option[Map[B, C]])(cnf: CNF[A], model: Model[A]): Option[Map[B, C]] = {
     if (cnf.isEmpty)
       return logicSolver.solve(model)
     else if (cnf.exists(_.isEmpty))
@@ -21,8 +16,15 @@ class DPLLSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SMTSolve
     else if (logicSolver.solve(model).isEmpty)
       return None
 
-    solveUnit(cnf, model)
+    solveFunction(cnf, model)
   }
+
+  private def propagate(cnf: CNF[A], literal: Literal[A]): CNF[A] = {
+    val negLiteral = literal.neg
+    cnf.filterNot(_.contains(literal)).map(_ - negLiteral)
+  }
+
+  private val checkedSolveUnit: (CNF[A], Model[A]) => Option[Map[B, C]] = checkedSolve(solveUnit(_, _))
 
   @tailrec
   private def solveUnit(cnf: CNF[A], model: Model[A], unitCount: Int = 0): Option[Map[B, C]] = {
@@ -32,27 +34,17 @@ class DPLLSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SMTSolve
         solveUnit(propagate(cnf, unitLiteral), model + unitLiteral, unitCount + 1)
       case None =>
         if (unitCount > 0)
-          solveSplitFull(cnf, model)
+          checkedSolveSplit(cnf, model)
         else
           solveSplit(cnf, model)
     }
   }
 
-  private def solveSplitFull(cnf: CNF[A], model: Model[A]): Option[Map[B, C]] = {
-    // TODO: remove duplication with solveUnitFull
-    if (cnf.isEmpty)
-      return logicSolver.solve(model)
-    else if (cnf.exists(_.isEmpty))
-      return None
-    else if (logicSolver.solve(model).isEmpty)
-      return None
-
-    solveSplit(cnf, model)
-  }
+  private val checkedSolveSplit: (CNF[A], Model[A]) => Option[Map[B, C]] = checkedSolve(solveSplit)
 
   private def solveSplit(cnf: CNF[A], model: Model[A]): Option[Map[B, C]] = {
     // splitting
     val variable = extractVariables(cnf).head
-    solveUnitFull(propagate(cnf, variable), model + variable) orElse solveUnitFull(propagate(cnf, variable.neg), model + variable.neg)
+    checkedSolveUnit(propagate(cnf, variable), model + variable) orElse checkedSolveUnit(propagate(cnf, variable.neg), model + variable.neg)
   }
 }
