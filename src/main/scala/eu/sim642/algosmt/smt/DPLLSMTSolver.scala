@@ -6,14 +6,14 @@ import scala.annotation.tailrec
 
 class DPLLSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SMTSolver[A, B, C] {
 
-  override def solve(cnf: CNF[A]): Option[Map[B, C]] = solveFull(cnf, Set.empty)
+  override def solve(cnf: CNF[A]): Option[Map[B, C]] = solveUnitFull(cnf, Set.empty)
 
   private def propagate(cnf: CNF[A], literal: Literal[A]): CNF[A] = {
     val negLiteral = literal.neg
     cnf.filterNot(_.contains(literal)).map(_ - negLiteral)
   }
 
-  private def solveFull(cnf: CNF[A], model: Model[A]): Option[Map[B, C]] = {
+  private def solveUnitFull(cnf: CNF[A], model: Model[A]): Option[Map[B, C]] = {
     if (cnf.isEmpty)
       return logicSolver.solve(model)
     else if (cnf.exists(_.isEmpty))
@@ -31,23 +31,28 @@ class DPLLSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SMTSolve
       case Some(unitLiteral) =>
         solveUnit(propagate(cnf, unitLiteral), model + unitLiteral, unitCount + 1)
       case None =>
-        if (unitCount > 0) {
-          // TODO: remove duplication with solveFull
-          if (cnf.isEmpty)
-            return logicSolver.solve(model)
-          else if (cnf.exists(_.isEmpty))
-            return None
-          else if (logicSolver.solve(model).isEmpty)
-            return None
-        }
-
-        solveSplit(cnf, model)
+        if (unitCount > 0)
+          solveSplitFull(cnf, model)
+        else
+          solveSplit(cnf, model)
     }
+  }
+
+  private def solveSplitFull(cnf: CNF[A], model: Model[A]): Option[Map[B, C]] = {
+    // TODO: remove duplication with solveUnitFull
+    if (cnf.isEmpty)
+      return logicSolver.solve(model)
+    else if (cnf.exists(_.isEmpty))
+      return None
+    else if (logicSolver.solve(model).isEmpty)
+      return None
+
+    solveSplit(cnf, model)
   }
 
   private def solveSplit(cnf: CNF[A], model: Model[A]): Option[Map[B, C]] = {
     // splitting
     val variable = extractVariables(cnf).head
-    solveFull(propagate(cnf, variable), model + variable) orElse solveFull(propagate(cnf, variable.neg), model + variable.neg)
+    solveUnitFull(propagate(cnf, variable), model + variable) orElse solveUnitFull(propagate(cnf, variable.neg), model + variable.neg)
   }
 }
