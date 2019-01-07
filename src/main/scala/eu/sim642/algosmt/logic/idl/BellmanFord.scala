@@ -17,12 +17,19 @@ object BellmanFord {
     val distance: mutable.Map[A, Weight] = mutable.Map.empty ++ initialDistance // mutable.Map(initialDistance.toSeq: _*)
 
     // step 2: relax edges repeatedly
-    for {
-      i <- 1 until vertices.size
-      (u, w, v) <- edges
-      if distance.contains(u)
-      if !distance.contains(v) || (distance(u) + w < distance(v))
-    } distance(v) = distance(u) + w
+    for (i <- 1 until vertices.size) {
+      var changed = false
+      for {
+        (u, w, v) <- edges
+        if distance.contains(u)
+        if !distance.contains(v) || (distance(u) + w < distance(v))
+      } {
+        distance(v) = distance(u) + w
+        changed = true
+      }
+      if (!changed)
+        return Some(distance.toMap)
+    }
 
     // step 3: check for negative-weight cycles
     for {

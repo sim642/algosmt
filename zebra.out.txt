@@ -35,3 +35,8 @@ Solved in 174.405111577 s
 Solved in 170.11206223 s
 Solved in 167.73705864 s
 Solved in 173.812844682 s
+// Bellman-Ford early return
+Solved in 106.683671863 s
+Solved in 115.331622795 s
+Solved in 110.301883351 s
+Solved in 109.101974178 s
