@@ -1,0 +1,37 @@
+sat
+((parliament 5) (tea 2) (blue 2) (milk 3) (snails 3) (chesterfield 2) (dog 4) (spaniard 4) (horse 2) (green 5) (water 1) (kools 1) (ukrainian 2) (norwegian 1) (coffee 5) (yellow 1) (zebra 5) (englishman 3) (ivory 4) (luckystrike 4) (orangejuice 4) (japanese 5) (oldgold 3) (fox 1) (red 3))
+
+1: yellow norwegian water kools fox
+2: blue ukrainian tea chesterfield horse
+3: red englishman milk oldgold snails
+4: ivory spaniard orangejuice luckystrike dog
+5: green japanese coffee parliament zebra
+
+Solved in 486.594759233 s // List?
+Solved in 401.523920677 s // Set?
+
+// single unit propagation
+Solved in 372.018599081 s
+Solved in 355.018809315 s
+// multiple unit propagation
+Solved in 334.761862646 s
+Solved in 328.823654031 s
+Solved in 335.957379731 s
+// multiple unit propagation solveSplitFull
+Solved in 326.177770953 s
+Solved in 331.833570121 s
+// getOrElse
+Solved in 335.117772873 s
+Solved in 333.687872503 s
+// checked
+Solved in 328.210639704 s
+Solved in 333.077408143 s
+Solved in 323.737271456 s
+// no SourceVertex
+Solved in 173.562329374 s
+Solved in 172.301886552 s
+Solved in 174.405111577 s
+// Traversable
+Solved in 170.11206223 s
+Solved in 167.73705864 s
+Solved in 173.812844682 s
