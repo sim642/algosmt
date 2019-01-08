@@ -1,0 +1,150 @@
+\documentclass{beamer}
+
+\usepackage[orientation=portrait,size=a1,scale=1.75]{beamerposter}
+\setbeamercolor{block title}{fg=white,bg=title.fg!75!white}
+\setbeamercolor{block body}{bg=title.fg!3!white}
+\addtobeamertemplate{block end}{}{\vspace*{2ex}} % White space under blocks
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{csquotes}
+
+% https://tex.stackexchange.com/a/148696
+\usepackage{ragged2e}
+\addtobeamertemplate{block begin}{}{\justifying}
+
+\usepackage{graphicx}
+
+\usepackage[outputdir=build]{minted}
+\setminted{
+	autogobble=true
+}
+
+\newminted[smtlib]{lisp}{fontsize=\small}
+
+
+\title{Satisfiability Modulo Integer Difference Logic}
+\author{Simmo Saan}
+\institute{Institute of Computer Science, University of Tartu}
+\date{}
+
+\begin{document}
+
+\begin{frame}[fragile,t]
+\maketitle
+
+\begin{columns}[t,onlytextwidth]
+	\begin{column}{0.485\textwidth}
+		\begin{block}{Introduction}
+			foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar
+		\end{block}
+	
+		\begin{block}{DPLL algorithm}
+			Davis–Putnam–Logemann–Loveland (DPLL) algorithm is a \emph{complete} SAT/SMT solving algorithm based on backtracking search, where call consists of three steps:
+			\begin{enumerate}
+				\item \textbf{Conflict checking:} if there is a conflict, backtrack.
+				\item \textbf{Unit propagation:} if a clause contains only one literal, then assume it to be true.
+				\item \textbf{Splitting:} choose a variable and split into two recursive searches, in the first one assume the variable to be true, in the second one false.
+			\end{enumerate}
+		
+			DPLL allows for significant improvements like conflict-driven clause learning (CDCL), which is used by state of the art SAT/SMT solvers.
+		\end{block}
+	
+		\begin{block}{Integer difference logic}
+			Integer difference logic (IDL) uses integer variables and constraints in the form $x - y \leq n$, where $x, y$ are integer variables and $n$ an integer constant. Systems of such difference constraints can, for example, encode various scheduling problems.
+			
+			Furthermore, many other integer constraints can be converted to IDL, for example:
+			\begin{itemize}
+				\item $x - y < n \quad\to\quad x - y \leq n - 1$,
+				\item $x - y \geq n \quad\to\quad y - x \leq -n$,
+				\item $x - y = n \quad\to\quad (x - y \leq n) \land (x - y \geq n)$,
+				\item $x - y \neq n \quad\to\quad (x - y < n) \lor (x - y > n)$,
+				\item $x \bowtie y + n \quad\to\quad x - y \bowtie n$,
+				\item $\quad\;\;\: x \bowtie n \quad\to\quad x - \mathbf{Z} \bowtie n$,
+			\end{itemize}
+			where ${\bowtie} \in \{\leq, <, \geq, >, =, \neq\}$ and $\mathbf{Z}$ is an artifical zero variable.
+		\end{block}
+	\end{column}
+
+	\begin{column}{0.485\textwidth}
+		\begin{block}{Bellman-Ford algorithm}
+			content...
+		\end{block}
+	
+		\begin{block}{Dinesman's multiple-dwelling problem}
+			Problem definition in English and SMT-LIB language:
+			\begin{enumerate}
+				\setcounter{enumi}{-1} % start from 0
+				
+				\item Baker, Cooper, Fletcher, Miller, and Smith live on different floors of an apartment house that contains only five floors.
+				\begin{smtlib}
+					(assert (distinct baker cooper fletcher miller smith))
+					(assert (<= 1 baker 5))
+					(assert (<= 1 cooper 5))
+					(assert (<= 1 fletcher 5))
+					(assert (<= 1 miller 5))
+					(assert (<= 1 smith 5))
+				\end{smtlib}
+				
+				\item Baker does not live on the top floor.
+				\begin{smtlib}
+					(assert (distinct baker 5))
+				\end{smtlib}
+			
+				\item Cooper does not live on the bottom floor.
+				\begin{smtlib}
+					(assert (distinct cooper 1))
+				\end{smtlib}
+				
+				\item Fletcher does not live on either the top or the bottom floor.
+				\begin{smtlib}
+					(assert (and (distinct fletcher 1)
+					             (distinct fletcher 5)))
+				\end{smtlib}
+			
+				\item Miller lives on a higher floor than does Cooper.
+				\begin{smtlib}
+					(assert (> miller cooper))
+				\end{smtlib}
+			
+				\item Smith does not live on a floor adjacent to Fletcher's.
+				\begin{smtlib}
+					(assert (and (distinct smith (+ fletcher 1))
+					             (distinct smith (+ fletcher (- 1)))))
+				\end{smtlib}
+			
+				\item Fletcher does not live on a floor adjacent to Cooper's.
+				\begin{smtlib}
+					(assert (and (distinct fletcher (+ cooper 1))
+					             (distinct fletcher (+ cooper (- 1)))))
+				\end{smtlib}
+			\end{enumerate}
+		
+			Solving:
+			\begin{smtlib}
+				(check-sat)
+				sat
+				(get-model)
+				((cooper 2) (fletcher 4) (baker 3) (miller 5) (smith 1))
+			\end{smtlib}
+		\end{block}
+	
+		\begin{block}{Conclusion}
+			content...
+		\end{block}
+	
+%		\begin{block}{Acknowledgements}
+%			\includegraphics[width=0.5\linewidth]{ita_small-logo-eng.png}
+%		\end{block}
+	\end{column}
+\end{columns}
+
+\vspace{0.5em}
+
+\begin{block}{References}
+	long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference 
+\end{block}
+
+\end{frame}
+
+\end{document}
