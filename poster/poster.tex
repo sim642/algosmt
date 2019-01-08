@@ -5,9 +5,23 @@
 \setbeamercolor{block body}{bg=title.fg!3!white}
 \addtobeamertemplate{block end}{}{\vspace*{2ex}} % White space under blocks
 
+
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{csquotes}
+
+\usepackage[backend=biber,sorting=none]{biblatex}
+\ExecuteBibliographyOptions{giveninits=true,maxnames=4}
+\ExecuteBibliographyOptions{doi=false,isbn=false,eprint=false,url=false}
+%\DeclareFieldFormat{url}{\footnotesize\url{#1}} % no URL: prefix
+\DeclareFieldFormat{url}{} % no url field, url=false doesn't work in beamer...
+\DeclareFieldFormat{urldate}{\mkbibparens{#1}} % no urldate prefix word
+\renewbibmacro{in:}{}
+\addbibresource{poster.bib}
+
+\setbeamercolor{bibliography entry author}{fg=black}
+\setbeamercolor{bibliography entry note}{fg=black}
+\renewcommand*{\bibfont}{\small}
 
 % https://tex.stackexchange.com/a/148696
 \usepackage{ragged2e}
@@ -30,16 +44,18 @@
 
 \begin{document}
 
+\nocite{*}
+
 \begin{frame}[fragile,t]
 \maketitle
 
 \begin{columns}[t,onlytextwidth]
 	\begin{column}{0.485\textwidth}
 		\begin{block}{Introduction}
-			foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar
+			foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar~\cite{slides}
 		\end{block}
 	
-		\begin{block}{DPLL algorithm}
+		\begin{block}{DPLL algorithm~\cite{DPLLmethod}}
 			Davis–Putnam–Logemann–Loveland (DPLL) algorithm is a \emph{complete} SAT/SMT solving algorithm based on backtracking search, where call consists of three steps:
 			\begin{enumerate}
 				\item \textbf{Conflict checking:} if there is a conflict, backtrack.
@@ -50,7 +66,7 @@
 			DPLL allows for significant improvements like conflict-driven clause learning (CDCL), which is used by state of the art SAT/SMT solvers.
 		\end{block}
 	
-		\begin{block}{Integer difference logic}
+		\begin{block}{Integer difference logic~\cite{slides}}
 			Integer difference logic (IDL) uses integer variables and constraints in the form $x - y \leq n$, where $x, y$ are integer variables and $n$ an integer constant. Systems of such difference constraints can, for example, encode various scheduling problems.
 			
 			Furthermore, many other integer constraints can be converted to IDL, for example:
@@ -67,11 +83,11 @@
 	\end{column}
 
 	\begin{column}{0.485\textwidth}
-		\begin{block}{Bellman-Ford algorithm}
+		\begin{block}{Bellman-Ford algorithm~\cite{CLRS}}
 			content...
 		\end{block}
 	
-		\begin{block}{Dinesman's multiple-dwelling problem}
+		\begin{block}{Dinesman's multiple-dwelling problem~\cite{SICP}}
 			Problem definition in English and SMT-LIB language:
 			\begin{enumerate}
 				\setcounter{enumi}{-1} % start from 0
@@ -142,7 +158,8 @@
 \vspace{0.5em}
 
 \begin{block}{References}
-	long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference long reference 
+	\setbeamertemplate{bibliography item}[text]
+	\printbibliography[heading=none]
 \end{block}
 
 \end{frame}
