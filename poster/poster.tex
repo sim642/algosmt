@@ -4,23 +4,18 @@
 \setbeamercolor{block title}{fg=white,bg=title.fg!75!white}
 \setbeamercolor{block body}{bg=title.fg!3!white}
 \addtobeamertemplate{block end}{}{\vspace*{2ex}} % White space under blocks
-\addtobeamertemplate{title page}{
-	\begin{columns}
-		\begin{column}{0.15\textwidth}
-			\usebeamertemplate*{logo left}
-		\end{column}
-		\begin{column}{0.6\textwidth}
-			\vspace{1em}
-}{
-		\end{column}
-		\begin{column}{0.15\textwidth}
-			\usebeamertemplate*{logo right}
-		\end{column}
-	\end{columns}
+% https://tex.stackexchange.com/a/160328
+\addtobeamertemplate{headline}{}{
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [anchor=north west, inner sep=2em, yshift=-6em] at (current page.north west) {\usebeamertemplate*{logo left}};
+		\node [anchor=north east, inner sep=2em, yshift=-6em] at (current page.north east) {\usebeamertemplate*{logo right}};
+	\end{tikzpicture}
 }
-\setbeamerfont{title}{size=\huge}
-\setbeamerfont{subtitle}{size=\large}
-\setbeamerfont{author}{size=\Large}
+\addtobeamertemplate{title page}{}{\vspace{-2em}}
+
+\setbeamerfont{title}{size=\huge,series=\bfseries}
+\setbeamerfont{subtitle}{size=\large,series=\mdseries}
+\setbeamerfont{author}{size=\Large,series=\bfseries}
 \setbeamerfont{institute}{size=\large}
 
 \usepackage[utf8]{inputenc}
@@ -67,8 +62,8 @@
 \institute{Institute of Computer Science, University of Tartu}
 \date{}
 
-\setbeamertemplate{logo left}{\includegraphics[height=7em]{tartu_ylikool-logo_ja_v2rvid-cmyk-07_copy.png}}
-\setbeamertemplate{logo right}{\includegraphics[height=5em]{ita_small-logo-eng.png}}
+\setbeamertemplate{logo left}{\includegraphics[height=15em]{tartu_ylikool-logo_ja_v2rvid-cmyk-07_copy.png}}
+\setbeamertemplate{logo right}{\includegraphics[height=12.5em]{ita_small-logo-eng.png}}
 
 \begin{document}
 
