@@ -1,6 +1,6 @@
 \documentclass{beamer}
 
-\usepackage[orientation=portrait,size=a1,scale=1.75]{beamerposter}
+\usepackage[orientation=portrait,size=a1,scale=1.5]{beamerposter}
 \setbeamercolor{block title}{fg=white,bg=title.fg!75!white}
 \setbeamercolor{block body}{bg=title.fg!3!white}
 \addtobeamertemplate{block end}{}{\vspace*{2ex}} % White space under blocks
@@ -21,6 +21,7 @@
 
 \setbeamercolor{bibliography entry author}{fg=black}
 \setbeamercolor{bibliography entry note}{fg=black}
+\setbeamerfont{bibliography item}{size=\small} % unneeded?
 \renewcommand*{\bibfont}{\small}
 
 % https://tex.stackexchange.com/a/148696
@@ -28,6 +29,10 @@
 \addtobeamertemplate{block begin}{}{\justifying}
 
 \usepackage{graphicx}
+\usepackage{subcaption}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
 
 \usepackage[outputdir=build]{minted}
 \setminted{
@@ -38,6 +43,7 @@
 
 
 \title{Satisfiability Modulo Integer Difference Logic}
+\subtitle{MTAT.03.238, Advanced Algorithmics}
 \author{Simmo Saan}
 \institute{Institute of Computer Science, University of Tartu}
 \date{}
@@ -84,7 +90,51 @@
 
 	\begin{column}{0.485\textwidth}
 		\begin{block}{Bellman-Ford algorithm~\cite{CLRS}}
-			content...
+			Systems of difference constraints can be transformed into constraint graphs with an extra vertex. The Bellman-Ford single-source shortest paths algorithms can be used to find a solution from the distances, or detect a conflict from negative weight cycle.
+
+			\begin{figure}[h]
+				\centering
+				\begin{subfigure}{0.3\linewidth}
+					\centering
+					\begin{align*}
+						x_1 - x_2 &\leq 2 \\
+						x_2 - x_3 &\leq 1 \\
+						x_3 - x_1 &\leq -1 \\
+					\end{align*}
+				\end{subfigure}
+				~
+				\begin{subfigure}{0.5\linewidth}
+					\centering
+					\begin{tikzpicture}[
+						node distance=5ex and 10ex,
+						line width=0.1ex,
+						on grid,
+						vertex/.style={
+							draw,circle,inner sep=0.5ex
+						},
+						arrows={-Stealth[scale=2]},auto
+					]
+						\node[vertex] (x0) {$x_0$};
+						\node[vertex] (x1) [right=of x0] {$x_1$};
+						\node[vertex] (x2) [above right=of x1] {$x_2$};
+						\node[vertex] (x3) [below right=of x1] {$x_3$};
+
+						\path
+							(x0) edge node {0} (x1)
+							     edge [bend left] node [swap] {0} (x2)
+							     edge [bend right] node [near start] {0} (x3)
+							(x1) edge node [swap] {-1} (x3)
+							(x2) edge node {2} (x1)
+							(x3) edge node [swap] {1} (x2);
+					\end{tikzpicture}
+				\end{subfigure}
+			\end{figure}
+
+			Notable optimizations are
+			\begin{itemize}
+				\item Avoiding the use of extra vertex by initializing all distances to 0.
+				\item Returning early if no edge is relaxed.
+			\end{itemize}
 		\end{block}
 	
 		\begin{block}{Dinesman's multiple-dwelling problem~\cite{SICP}}
@@ -146,7 +196,17 @@
 		\end{block}
 	
 		\begin{block}{Conclusion}
-			content...
+			The implemented SMT solver:
+			\begin{enumerate}
+				\item takes problem definition in SMT-LIB language,
+				\item converts constraints to difference constraints (if possible),
+				\item uses DPLL to solve the boolean parts of the problem,
+				\item uses Bellman-Ford to solve IDL parts of the problem for DPLL.
+			\end{enumerate}
+
+			Its correctness has been tested on logic puzzles like Dinesman's multiple-dwelling puzzle, Philips's liars puzzle, $n$-queens puzzle and zebra puzzle (Einstein's puzzle).
+
+			Code repository can be found at: \url{https://github.com/sim642/algosmt}.
 		\end{block}
 	
 %		\begin{block}{Acknowledgements}
