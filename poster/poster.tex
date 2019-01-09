@@ -5,10 +5,11 @@
 \setbeamercolor{block body}{bg=title.fg!3!white}
 \addtobeamertemplate{block end}{}{\vspace*{2ex}} % White space under blocks
 
-
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{csquotes}
+
+\addtobeamertemplate{block begin}{}{\setlength{\parskip}{10pt}\vspace{-\parskip}} % hack
 
 \usepackage[backend=biber,sorting=none]{biblatex}
 \ExecuteBibliographyOptions{giveninits=true,maxnames=4}
@@ -50,7 +51,7 @@
 
 \begin{document}
 
-\nocite{*}
+%\nocite{*}
 
 \begin{frame}[fragile,t]
 \maketitle
@@ -58,7 +59,11 @@
 \begin{columns}[t,onlytextwidth]
 	\begin{column}{0.485\textwidth}
 		\begin{block}{Introduction}
-			foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar foobar~\cite{slides}
+			Boolean satisfiability (SAT) problems, which consist of purely boolean algebra expressions, can be solved by SAT solvers. While many complicated problems can be described as SAT problems, describing the problem purely with booleans and constructing the respective conjunctive normal form (CNF) can be difficult and inefficient.
+
+			Being able to use integer variables and conditions makes modeling of many problems much easier and more intuitive. \textbf{Satisfiability modulo theories (SMT)} is a generalization of SAT, where the logical expressions may, besides boolean variables, contain, for example, integer variables and conditions between them. Such problems are solved by SMT solvers.
+
+			The goal of the project was to understand is to understand how SMT solvers work and implement a simple solver.
 		\end{block}
 	
 		\begin{block}{DPLL algorithm~\cite{DPLLmethod}}
@@ -86,9 +91,7 @@
 			\end{itemize}
 			where ${\bowtie} \in \{\leq, <, \geq, >, =, \neq\}$ and $\mathbf{Z}$ is an artifical zero variable.
 		\end{block}
-	\end{column}
 
-	\begin{column}{0.485\textwidth}
 		\begin{block}{Bellman-Ford algorithm~\cite{CLRS}}
 			Systems of difference constraints can be transformed into constraint graphs with an extra vertex. The Bellman-Ford single-source shortest paths algorithms can be used to find a solution from the distances, or detect a conflict from negative weight cycle.
 
@@ -136,8 +139,19 @@
 				\item Returning early if no edge is relaxed.
 			\end{itemize}
 		\end{block}
+	\end{column}
+
+	\begin{column}{0.485\textwidth}
+		\begin{block}{SMT solvers~\cite{slides}}
+			The modern standard architecture of SMT solvers is the following:
+			\begin{itemize}
+				\item A \textbf{SAT solver} (e.g. DPLL algorithm) handles solving of the boolean expressions, without having to deal with the logic constraints within.
+				\item A \textbf{logic solver} (e.g. Bellman-Ford algorithm for IDL) handles solving of the logic itself, without having to deal with boolean satisfiability.
+			\end{itemize}
+			The two independent solving procedures are combined by having the SAT solver call the logic solver when it needs to, for example, to check for check for conflicts.
+		\end{block}
 	
-		\begin{block}{Dinesman's multiple-dwelling problem~\cite{SICP}}
+		\begin{block}{Dinesman's multiple-dwelling problem} %~\cite{SICP}}
 			Problem definition in English and SMT-LIB language:
 			\begin{enumerate}
 				\setcounter{enumi}{-1} % start from 0
@@ -186,7 +200,7 @@
 				\end{smtlib}
 			\end{enumerate}
 		
-			Solving:
+			SMT-LIB commands for checking satisfiability and respective variable values, and their outputs from the implemented SMT solver for the given problem:
 			\begin{smtlib}
 				(check-sat)
 				sat
@@ -200,27 +214,29 @@
 			\begin{enumerate}
 				\item takes problem definition in SMT-LIB language,
 				\item converts constraints to difference constraints (if possible),
+				\item converts boolean expression to CNF,
 				\item uses DPLL to solve the boolean parts of the problem,
 				\item uses Bellman-Ford to solve IDL parts of the problem for DPLL.
 			\end{enumerate}
 
 			Its correctness has been tested on logic puzzles like Dinesman's multiple-dwelling puzzle, Philips's liars puzzle, $n$-queens puzzle and zebra puzzle (Einstein's puzzle).
 
-			Code repository can be found at: \url{https://github.com/sim642/algosmt}.
+			\textbf{Project code repository: \url{https://github.com/sim642/algosmt}}.
 		\end{block}
 	
-%		\begin{block}{Acknowledgements}
-%			\includegraphics[width=0.5\linewidth]{ita_small-logo-eng.png}
-%		\end{block}
+		\begin{block}{References}
+			\setbeamertemplate{bibliography item}[text]
+			\printbibliography[heading=none]
+		\end{block}
 	\end{column}
 \end{columns}
 
-\vspace{0.5em}
-
-\begin{block}{References}
-	\setbeamertemplate{bibliography item}[text]
-	\printbibliography[heading=none]
-\end{block}
+%\vspace{0.5em}
+%
+%\begin{block}{References}
+%	\setbeamertemplate{bibliography item}[text]
+%	\printbibliography[heading=none]
+%\end{block}
 
 \end{frame}
 
