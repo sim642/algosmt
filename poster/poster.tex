@@ -105,14 +105,22 @@
 			Integer difference logic (IDL) uses integer variables and constraints in the form $x - y \leq n$, where $x, y$ are integer variables and $n$ an integer constant. Systems of such difference constraints can, for example, encode various scheduling problems.
 			
 			Furthermore, many other integer constraints can be converted to IDL, for example:
-			\begin{itemize}
-				\item $x - y < n \quad\to\quad x - y \leq n - 1$,
-				\item $x - y \geq n \quad\to\quad y - x \leq -n$,
-				\item $x - y = n \quad\to\quad (x - y \leq n) \land (x - y \geq n)$,
-				\item $x - y \neq n \quad\to\quad (x - y < n) \lor (x - y > n)$,
-				\item $x \bowtie y + n \quad\to\quad x - y \bowtie n$,
-				\item $\quad\;\;\: x \bowtie n \quad\to\quad x - \mathbf{Z} \bowtie n$,
-			\end{itemize}
+%			\begin{itemize}
+%				\item $x - y < n \quad\to\quad x - y \leq n - 1$,
+%				\item $x - y \geq n \quad\to\quad y - x \leq -n$,
+%				\item $x - y = n \quad\to\quad (x - y \leq n) \land (x - y \geq n)$,
+%				\item $x - y \neq n \quad\to\quad (x - y < n) \lor (x - y > n)$,
+%				\item $x \bowtie y + n \quad\to\quad x - y \bowtie n$,
+%				\item $\quad\;\;\: x \bowtie n \quad\to\quad x - \mathbf{Z} \bowtie n$,
+%			\end{itemize}
+			\begin{align*}
+				x - y < n \quad&\mapsto\quad x - y \leq n - 1, \\
+				x - y \geq n \quad&\mapsto\quad y - x \leq -n, \\
+				x - y = n \quad&\mapsto\quad (x - y \leq n) \land (x - y \geq n), \\
+				x - y \neq n \quad&\mapsto\quad (x - y < n) \lor (x - y > n), \\
+				x \bowtie y + n \quad&\mapsto\quad x - y \bowtie n, \\
+				x \bowtie n \quad&\mapsto\quad x - \mathbf{Z} \bowtie n,
+			\end{align*}
 			where ${\bowtie} \in \{\leq, <, \geq, >, =, \neq\}$ and $\mathbf{Z}$ is an artifical zero variable.
 		\end{block}
 
