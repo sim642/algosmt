@@ -4,6 +4,24 @@
 \setbeamercolor{block title}{fg=white,bg=title.fg!75!white}
 \setbeamercolor{block body}{bg=title.fg!3!white}
 \addtobeamertemplate{block end}{}{\vspace*{2ex}} % White space under blocks
+\addtobeamertemplate{title page}{
+	\begin{columns}
+		\begin{column}{0.15\textwidth}
+			\usebeamertemplate*{logo left}
+		\end{column}
+		\begin{column}{0.6\textwidth}
+			\vspace{1em}
+}{
+		\end{column}
+		\begin{column}{0.15\textwidth}
+			\usebeamertemplate*{logo right}
+		\end{column}
+	\end{columns}
+}
+\setbeamerfont{title}{size=\huge}
+\setbeamerfont{subtitle}{size=\large}
+\setbeamerfont{author}{size=\Large}
+\setbeamerfont{institute}{size=\large}
 
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -48,6 +66,9 @@
 \author{Simmo Saan}
 \institute{Institute of Computer Science, University of Tartu}
 \date{}
+
+\setbeamertemplate{logo left}{\includegraphics[height=7em]{tartu_ylikool-logo_ja_v2rvid-cmyk-07_copy.png}}
+\setbeamertemplate{logo right}{\includegraphics[height=5em]{ita_small-logo-eng.png}}
 
 \begin{document}
 
