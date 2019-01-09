@@ -158,10 +158,10 @@
 
 						\path
 							(x0) edge node {0} (x1)
-							     edge [bend left] node [swap] {0} (x2)
-							     edge [bend right] node [near start] {0} (x3)
+							     edge [bend left] node {0} (x2)
+							     edge [bend right] node [swap] {0} (x3)
 							(x1) edge node [swap] {-1} (x3)
-							(x2) edge node {2} (x1)
+							(x2) edge node [swap] {2} (x1)
 							(x3) edge node [swap] {1} (x2);
 					\end{tikzpicture}
 				\end{subfigure}
