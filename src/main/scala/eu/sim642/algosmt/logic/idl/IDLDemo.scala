@@ -29,7 +29,7 @@ object IDLDemo extends IDLSolver[String] {
         |(<= (- x2 x3) 1)
         |(<= (- x3 x1) (- 1))
       """.stripMargin)
-    println(solve(extractVariables(constr1), constr1))
+    println(solve(extractVariables(constr1), constr1, Map.empty))
 
     val constr2 = parseConstraints(
       """
@@ -37,6 +37,6 @@ object IDLDemo extends IDLSolver[String] {
         |(<= (- x2 x3) 1)
         |(<= (- x3 x1) (- 4))
       """.stripMargin)
-    println(solve(extractVariables(constr2), constr2))
+    println(solve(extractVariables(constr2), constr2, Map.empty))
   }
 }

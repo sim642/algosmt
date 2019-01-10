@@ -40,3 +40,9 @@ Solved in 106.683671863 s
 Solved in 115.331622795 s
 Solved in 110.301883351 s
 Solved in 109.101974178 s
+// prevLogicModel
+Solved in 97.728313847 s
+Solved in 96.246786341 s
+Solved in 99.268372133 s
+Solved in 96.178735736 s
+Solved in 97.312823437 s

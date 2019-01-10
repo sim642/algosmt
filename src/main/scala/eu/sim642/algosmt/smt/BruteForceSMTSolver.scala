@@ -18,6 +18,6 @@ class BruteForceSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SM
       literals = (posLiterals ++ negLiterals).toSet[Literal[A]]
       if evaluate(cnf, literals)
     } yield literals
-    goodLiterals.flatMap(logicSolver.solve).headOption
+    goodLiterals.flatMap(logicSolver.solve(_, Map.empty)).headOption
   }
 }
