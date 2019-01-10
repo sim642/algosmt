@@ -128,7 +128,7 @@
 
 		\begin{block}{Bellman-Ford algorithm~\cite{CLRS}}
 			Systems of difference constraints can be transformed into constraint graphs with an extra vertex. The Bellman-Ford single-source shortest paths algorithms can be used to find a solution from the distances, or detect a conflict from negative weight cycle.
-
+			\vspace*{-1em}
 			\begin{figure}[h]
 				\centering
 				\begin{subfigure}{0.3\linewidth}
@@ -166,11 +166,13 @@
 					\end{tikzpicture}
 				\end{subfigure}
 			\end{figure}
+			\vspace*{-1em}
 
 			Notable optimizations are
 			\begin{itemize}
 				\item Avoiding the use of extra vertex by initializing all distances to 0.
 				\item Returning early if no edge is relaxed.
+				\item Reusing previous distances for initialization if edges are added.
 			\end{itemize}
 		\end{block}
 	\end{column}
