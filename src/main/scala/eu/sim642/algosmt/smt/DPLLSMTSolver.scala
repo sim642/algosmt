@@ -14,11 +14,10 @@ class DPLLSMTSolver[A, B, C](logicSolver: LogicSolver[A, B, C]) extends SMTSolve
     else if (cnf.exists(_.isEmpty))
       return None
 
-    val logicModelOption = logicSolver.solve(model, prevLogicModel)
-    if (logicModelOption.isEmpty)
-      return None
-
-    solveFunction(cnf, model, logicModelOption.get)
+    logicSolver.solve(model, prevLogicModel) match {
+      case None => None
+      case Some(logicModel) => solveFunction(cnf, model, logicModel)
+    }
   }
 
   private def propagate(cnf: CNF[A], literal: Literal[A]): CNF[A] = {
