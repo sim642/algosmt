@@ -2,7 +2,8 @@ package eu.sim642.algosmt.smtlib
 
 import eu.sim642.algosmt.core._
 import eu.sim642.algosmt.logic.Logic
-import eu.sim642.algosmt.logic.idl.{IntegerDifferenceLogic, IntegerDifferenceLogic2}
+import eu.sim642.algosmt.logic.idl.IntegerDifferenceLogic
+import eu.sim642.algosmt.logic.idl0.IntegerDifferenceLogic0
 import eu.sim642.algosmt.logic.pl.PropositionalLogic
 import eu.sim642.algosmt.smt.DPLLSMTSolver
 import eu.sim642.algosmt.smt.cnf.CNFConverter
@@ -51,7 +52,7 @@ object SMTLibInterpreter {
   def main(args: Array[String]): Unit = {
     //val smt = new SMTLibInterpreter(PropositionalLogic)
     //val smt = new SMTLibInterpreter(IntegerDifferenceLogic)
-    val smt = new SMTLibInterpreter(IntegerDifferenceLogic2) with CheckSatTime with SetInfoStatus with DeclareFunIgnore with ExecuteString
+    val smt = new SMTLibInterpreter(IntegerDifferenceLogic0) with CheckSatTime with SetInfoStatus with DeclareFunIgnore with ExecuteString
 
     val source = args match {
       case Array() => Source.stdin
