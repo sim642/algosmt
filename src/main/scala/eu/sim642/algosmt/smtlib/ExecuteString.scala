@@ -2,7 +2,7 @@ package eu.sim642.algosmt.smtlib
 
 trait ExecuteString extends SMTLibInterpreterLike {
   def execute(in: String): Seq[Either[String, SExp]] = {
-    val inTrimmed = in.takeWhile(_ != '#').trim
+    val inTrimmed = in.takeWhile(_ != ';').trim
     if (inTrimmed.isEmpty)
       Seq.empty
     else {

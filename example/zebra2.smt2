@@ -1,8 +1,8 @@
 (assert (distinct yellow blue red ivory green))
 (assert (distinct norwegian ukrainian englishman spaniard japanese))
 (assert (distinct water tea milk orangejuice coffee))
-# (assert (distinct kools chesterfield oldgold luckystrike parliament))
-# (assert (distinct fox horse snails dog zebra))
+; (assert (distinct kools chesterfield oldgold luckystrike parliament))
+; (assert (distinct fox horse snails dog zebra))
 
 (assert (<= 1 yellow 5))
 (assert (<= 1 blue 5))
