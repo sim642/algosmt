@@ -19,30 +19,9 @@ class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) extends SMTLibInterprete
   private val assertions: mutable.Buffer[BExp[A]] = mutable.Buffer.empty
   private var modelOption: Option[Map[B, C]] = None
 
-  private def preprocess(sexp: SExp): SExp = sexp match {
-    case Application(func, args@_*) if theory.leftAssocFuncs.contains(func) && args.length > 2 =>
-      preprocess(Application(func, Application(func, args.init: _*), args.last))
-
-    case Application(func, args@_*) if theory.chainableFuncs.contains(func) && args.length > 2 =>
-      preprocess(Application("and",
-        args.zip(args.tail)
-          .map({ case (arg1, arg2) => Application(func, arg1, arg2) }): _*
-      ))
-
-    case Application(func, args@_*) if theory.pairwiseFuncs.contains(func) && args.length > 2 =>
-      val argHead +: argTail = args
-      preprocess(Application("and",
-        argTail.map(arg => Application(func, argHead, arg)) :+
-          Application(func, argTail: _*): _*
-      ))
-
-    case Atom(str) => Atom(str)
-    case Compound(exps@_*) => Compound(exps.map(preprocess): _*)
-  }
-
   def execute(sexp: SExp): Seq[Either[String, SExp]] = sexp match {
     case Application("assert", exp) =>
-      val bexp = parser.fromSExp(preprocess(exp))
+      val bexp = parser.fromSExp(theory.preprocess(exp))
       assertions += bexp
       Seq.empty
 
