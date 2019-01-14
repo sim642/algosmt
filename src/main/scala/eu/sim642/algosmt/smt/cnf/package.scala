@@ -3,7 +3,6 @@ package eu.sim642.algosmt.smt
 import scala.language.implicitConversions
 
 package object cnf {
-  // TODO: use Sets?
   type Disjunct[A] = Set[Literal[A]]
   type CNF[A] = Set[Disjunct[A]]
 
