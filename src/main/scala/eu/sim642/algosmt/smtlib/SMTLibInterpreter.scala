@@ -10,9 +10,6 @@ import eu.sim642.algosmt.smt.cnf.CNFConverter
 import scala.collection.mutable
 import scala.io.{Source, StdIn}
 
-trait SMTLibInterpreterLike {
-  def execute(sexp: SExp): Seq[Either[String, SExp]]
-}
 
 class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) extends SMTLibInterpreterLike {
   private val theory = logic.theory
@@ -52,14 +49,8 @@ class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) extends SMTLibInterprete
     case Application("check-sat") =>
       val bexp = assertions.reduce(And(_, _))
       val cnf = CNFConverter.convertFlat(bexp)
-      val startTime = System.nanoTime()
       modelOption = solver.solve(cnf)
-      val endTime = System.nanoTime()
-      val duration = endTime - startTime
-      Seq(
-        Left(s"Solved in ${duration / 1000000000.0} s"),
-        Right(Atom(modelOption.map(model => "sat").getOrElse("unsat")))
-      )
+      Seq(Right(Atom(modelOption.map(model => "sat").getOrElse("unsat"))))
 
     case Application("get-model") =>
       modelOption match {
@@ -74,50 +65,14 @@ class SMTLibInterpreter[A, B, C](logic: Logic[A, B, C]) extends SMTLibInterprete
     case exp =>
       Seq(Left(s"Match error: $exp"))
   }
-
-  def execute(in: String): Seq[Either[String, SExp]] = {
-    val in2 = in.takeWhile(_ != '#')
-    if (in2.trim.isEmpty)
-      Seq.empty
-    else {
-      SExpParser.parse(in2) match {
-        case SExpParser.Success(result, next) => execute(result)
-        case SExpParser.NoSuccess(msg, next) =>
-          Seq(Left(s"Parse error $in2: $msg ($next)"))
-      }
-    }
-  }
 }
 
-trait SetInfoStatus extends SMTLibInterpreterLike {
-  private var expectedStatusOption: Option[SExp] = None
-
-  abstract override def execute(sexp: SExp): Seq[Either[String, SExp]] = sexp match {
-    case Application("set-info", Atom(":status"), status) =>
-      expectedStatusOption = Some(status)
-      Seq.empty
-
-    case Application("check-sat") =>
-      expectedStatusOption match {
-        case Some(expectedStatus) =>
-          val superRet = super.execute(sexp)
-          if (superRet.exists(_.toOption == expectedStatusOption))
-            superRet
-          else
-            superRet :+ Left(s"Expected status $expectedStatus")
-        case None =>
-          super.execute(sexp)
-      }
-
-    case _ => super.execute(sexp)
-  }
-}
 
 object SMTLibInterpreter {
   def main(args: Array[String]): Unit = {
     //val smt = new SMTLibInterpreter(PropositionalLogic)
     //val smt = new SMTLibInterpreter(IntegerDifferenceLogic)
-    val smt = new SMTLibInterpreter(IntegerDifferenceLogic2) with SetInfoStatus
+    val smt = new SMTLibInterpreter(IntegerDifferenceLogic2) with CheckSatTime with SetInfoStatus with ExecuteString
 
     val source = args match {
       case Array() => Source.stdin
