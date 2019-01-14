@@ -3,7 +3,6 @@ SMT solver project for Advanced Algorithmics course at University of Tartu.
 
 ## Team
 * Simmo Saan
-* ???
 
 ## Satisfiability Modulo Integer Difference Logic
 ### Description
