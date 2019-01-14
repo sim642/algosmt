@@ -3,7 +3,21 @@ package eu.sim642.algosmt.smt.cnf
 import eu.sim642.algosmt.core._
 
 object CNFConverter {
-  def convert[A](exp: BExp[A]): BExp[A] = distribute(convertNNF(exp))
+  def convert[A](exp: BExp[A]): BExp[A] = distribute(convertNNF(preprocess(exp)))
+
+  private def preprocess[A](exp: BExp[A]): BExp[A] = exp match {
+    case Not(exp) => Not(preprocess(exp))
+    case And(left, right) => And(preprocess(left), preprocess(right))
+    case Or(left, right) => Or(preprocess(left), preprocess(right))
+
+    case Xor(left, right) =>
+      val left2 = preprocess(left)
+      val right2 = preprocess(right)
+      And(Or(left2, right2), Or(Not(left2), Not(right2)))
+      //Or(And(left2, Not(right2)), And(Not(left2), right2)) // TODO: eliminate tautologies before DPLL
+
+    case exp => exp
+  }
 
   private def convertNNF[A](exp: BExp[A]): BExp[A] = exp match {
     case Not(Not(exp)) => convertNNF(exp)

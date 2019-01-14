@@ -7,10 +7,7 @@ class CoreParser[A](delegate: BExpParser[A]) extends BExpParser[A] {
     case Application("not", exp) => Not(fromSExp(exp))
     case Application("and", left, right) => And(fromSExp(left), fromSExp(right))
     case Application("or", left, right) => Or(fromSExp(left), fromSExp(right))
-    case Application("xor", left, right) =>
-      val leftBexp = fromSExp(left)
-      val rightBexp = fromSExp(right)
-      And(Or(leftBexp, rightBexp), Or(Not(leftBexp), Not(rightBexp))) // TODO: add Xor as BExp and split in CNFConverter instead?
+    case Application("xor", left, right) => Xor(fromSExp(left), fromSExp(right))
     case exp => delegate.fromSExp(exp)
   }
 }
