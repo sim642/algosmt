@@ -1,5 +1,13 @@
 (set-info :status sat)
 
+; for Z3
+(declare-const baker Int)
+(declare-const cooper Int)
+(declare-const fletcher Int)
+(declare-const miller Int)
+(declare-const smith Int)
+
+
 (assert (distinct baker cooper fletcher miller smith))
 
 (assert (<= 1 baker 5))

@@ -51,7 +51,7 @@ object SMTLibInterpreter {
   def main(args: Array[String]): Unit = {
     //val smt = new SMTLibInterpreter(PropositionalLogic)
     //val smt = new SMTLibInterpreter(IntegerDifferenceLogic)
-    val smt = new SMTLibInterpreter(IntegerDifferenceLogic2) with CheckSatTime with SetInfoStatus with ExecuteString
+    val smt = new SMTLibInterpreter(IntegerDifferenceLogic2) with CheckSatTime with SetInfoStatus with DeclareFunIgnore with ExecuteString
 
     val source = args match {
       case Array() => Source.stdin

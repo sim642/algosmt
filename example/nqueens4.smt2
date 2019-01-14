@@ -1,5 +1,12 @@
 (set-info :status sat)
 
+; for Z3
+(declare-const x1 Int)
+(declare-const x2 Int)
+(declare-const x3 Int)
+(declare-const x4 Int)
+
+
 (assert (distinct x1 x2 x3 x4))
 
 (assert (<= 1 x1 4))

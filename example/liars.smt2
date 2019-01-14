@@ -1,5 +1,13 @@
 (set-info :status sat)
 
+; for Z3
+(declare-const betty Int)
+(declare-const ethel Int)
+(declare-const joan Int)
+(declare-const kitty Int)
+(declare-const mary Int)
+
+
 (assert (distinct betty ethel joan kitty mary))
 
 (assert (<= 1 betty 5))
