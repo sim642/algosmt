@@ -119,8 +119,11 @@ object SMTLibInterpreter {
     //val smt = new SMTLibInterpreter(IntegerDifferenceLogic)
     val smt = new SMTLibInterpreter(IntegerDifferenceLogic2) with SetInfoStatus
 
-    //val source = Source.stdin
-    val source = Source.fromFile("example/zebra.smt2")
+    val source = args match {
+      case Array() => Source.stdin
+      case Array(fileName) => Source.fromFile(fileName)
+    }
+
     for (line <- source.getLines()) {
       smt.execute(line).foreach({
         case Left(error) => Console.err.println(error)
