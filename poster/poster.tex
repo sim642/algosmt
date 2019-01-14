@@ -54,6 +54,8 @@
 
 \usepackage{graphicx}
 \usepackage{subcaption}
+\DeclareCaptionLabelFormat{structureparens}{\structure{(#2)}}
+\captionsetup{subrefformat=structureparens}
 
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta}
@@ -127,23 +129,25 @@
 		\end{block}
 
 		\begin{block}{Bellman-Ford algorithm~\cite{CLRS}}
-			Systems of difference constraints can be transformed into constraint graphs with an extra vertex. The Bellman-Ford single-source shortest paths algorithms can be used to find a solution from the distances, or detect a conflict from negative weight cycle.
+			Systems of difference constraints~\subref{subfig:constraints} can be transformed into constraint graphs with an extra vertex~\subref{subfig:graph}. The Bellman-Ford single-source shortest paths algorithm can be used to find a solution from the distances~\subref{subfig:solution}, or detect a conflict from negative weight cycle.
 			\vspace*{-1em}
 			\begin{figure}[h]
 				\centering
-				\begin{subfigure}{0.3\linewidth}
+				\begin{subfigure}[t]{0.3\linewidth}
 					\centering
+					\subcaption{Difference constraints}
 					\begin{align*}
 						x_1 - x_2 &\leq 2 \\
 						x_2 - x_3 &\leq 1 \\
-						x_3 - x_1 &\leq -1 \\
+						x_3 - x_1 &\leq -1
 					\end{align*}
+					\label{subfig:constraints}
 				\end{subfigure}
-				~
-				\begin{subfigure}{0.5\linewidth}
+				\begin{subfigure}[t]{0.4\linewidth}
 					\centering
+					\subcaption{Constraint graph}
 					\begin{tikzpicture}[
-						node distance=5ex and 10ex,
+						node distance=4ex and 10ex,
 						line width=0.1ex,
 						on grid,
 						vertex/.style={
@@ -164,9 +168,20 @@
 							(x2) edge node [swap] {2} (x1)
 							(x3) edge node [swap] {1} (x2);
 					\end{tikzpicture}
+					\label{subfig:graph}
+				\end{subfigure}
+				\begin{subfigure}[t]{0.2\linewidth}
+					\centering
+					\subcaption{Solution}
+					\begin{align*}
+						x_1 &= \delta(x_0, x_1) = 0 \\
+						x_2 &= \delta(x_0, x_2) = 0 \\
+						x_3 &= \delta(x_0, x_3) = -1
+					\end{align*}
+					\label{subfig:solution}
 				\end{subfigure}
 			\end{figure}
-			\vspace*{-1em}
+			\vspace*{-1.5em}
 
 			Notable optimizations are
 			\begin{itemize}
