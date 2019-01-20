@@ -89,13 +89,13 @@
 		\begin{block}{Introduction}
 			Boolean satisfiability (SAT) problems, which consist of purely boolean algebra expressions, can be solved by SAT solvers. While many complicated problems can be described as SAT problems, describing the problem purely with booleans and constructing the respective conjunctive normal form (CNF) can be difficult and inefficient.
 
-			Being able to use integer variables and conditions makes modeling of many problems much easier and more intuitive. \textbf{Satisfiability modulo theories (SMT)} is a generalization of SAT, where the logical expressions may, besides boolean variables, contain, for example, integer variables and conditions between them. Such problems are solved by SMT solvers.
+			Being able to use integer variables and conditions makes modelling of many problems much easier and more intuitive. \textbf{Satisfiability modulo theories (SMT)} is a generalization of SAT, where the logical expressions may also contain, for example, integer variables and conditions between them. Such problems are solved by SMT solvers.
 
-			The goal of the project was to understand is to understand how SMT solvers work and implement a simple solver.
+			The goal of the project was to understand how SMT solvers work and implement a simple solver.
 		\end{block}
 	
 		\begin{block}{DPLL algorithm~\cite{DPLLmethod}}
-			Davis–Putnam–Logemann–Loveland (DPLL) algorithm is a \emph{complete} SAT/SMT solving algorithm based on backtracking search, where call consists of three steps:
+			Davis–Putnam–Logemann–Loveland (DPLL) algorithm is a \emph{complete} SAT/SMT solving algorithm based on backtracking search, where a call consists of three steps:
 			\begin{enumerate}
 				\item \textbf{Conflict checking:} if there is a conflict, backtrack.
 				\item \textbf{Unit propagation:} if a clause contains only one literal, then assume it to be true.
@@ -108,7 +108,7 @@
 		\begin{block}{Integer difference logic~\cite{slides}}
 			Integer difference logic (IDL) uses integer variables and constraints in the form $x - y \leq n$, where $x, y$ are integer variables and $n$ an integer constant. Systems of such difference constraints can, for example, encode various scheduling problems.
 			
-			Furthermore, many other integer constraints can be converted to IDL, for example:
+			Furthermore, many other integer constraints can be converted to IDL by applying transformations like:
 %			\begin{itemize}
 %				\item $x - y < n \quad\to\quad x - y \leq n - 1$,
 %				\item $x - y \geq n \quad\to\quad y - x \leq -n$,
@@ -129,7 +129,7 @@
 		\end{block}
 
 		\begin{block}{Bellman-Ford algorithm~\cite{CLRS}}
-			Systems of difference constraints~\subref{subfig:constraints} can be transformed into constraint graphs with an extra vertex~\subref{subfig:graph}. The Bellman-Ford single-source shortest paths algorithm can be used to find a solution from the distances~\subref{subfig:solution}, or detect a conflict from negative weight cycle.
+			Systems of difference constraints~\subref{subfig:constraints} can be transformed into constraint graphs~\subref{subfig:graph} containing an extra vertex. The Bellman-Ford single-source shortest paths algorithm can be used to find a solution from the distances~\subref{subfig:solution}, or detect a conflict from a negative weight cycle.
 			\vspace*{-1em}
 			\begin{figure}[h]
 				\centering
@@ -183,10 +183,10 @@
 			\end{figure}
 			\vspace*{-1.5em}
 
-			Notable optimizations are
+			Notable optimizations are:
 			\begin{itemize}
-				\item Avoiding the use of extra vertex by initializing all distances to 0.
-				\item Returning early if no edge is relaxed.
+				\item Avoiding the use of the extra vertex by initializing all distances to 0.
+				\item Returning early if no edge is relaxed in an iteration.
 				\item Reusing previous distances for initialization if edges are added.
 			\end{itemize}
 		\end{block}
@@ -199,11 +199,11 @@
 				\item A \textbf{SAT solver} (e.g. DPLL algorithm) handles solving of the boolean expressions, without having to deal with the logic constraints within.
 				\item A \textbf{logic solver} (e.g. Bellman-Ford algorithm for IDL) handles solving of the logic itself, without having to deal with boolean satisfiability.
 			\end{itemize}
-			The two independent solving procedures are combined by having the SAT solver call the logic solver when it needs to, for example, to check for check for conflicts.
+			The two independent solving procedures are combined by having the SAT solver call the logic solver when it needs to, for example, to check for conflicts.
 		\end{block}
 	
 		\begin{block}{Dinesman's multiple-dwelling problem} %~\cite{SICP}}
-			Problem definition in English and SMT-LIB language:
+			Problem definition in English and standard SMT-LIB language:
 			\begin{enumerate}
 				\setcounter{enumi}{-1} % start from 0
 				
@@ -241,13 +241,13 @@
 				\item Smith does not live on a floor adjacent to Fletcher's.
 				\begin{smtlib}
 					(assert (and (distinct smith (+ fletcher 1))
-					             (distinct smith (+ fletcher (- 1)))))
+					             (distinct smith (- fletcher 1))))
 				\end{smtlib}
 			
 				\item Fletcher does not live on a floor adjacent to Cooper's.
 				\begin{smtlib}
 					(assert (and (distinct fletcher (+ cooper 1))
-					             (distinct fletcher (+ cooper (- 1)))))
+					             (distinct fletcher (- cooper 1))))
 				\end{smtlib}
 			\end{enumerate}
 		
