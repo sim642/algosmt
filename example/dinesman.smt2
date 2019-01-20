@@ -20,8 +20,8 @@
 (assert (distinct cooper 1))
 (assert (and (distinct fletcher 1) (distinct fletcher 5)))
 (assert (> miller cooper))
-(assert (and (distinct smith (+ fletcher 1)) (distinct smith (+ fletcher (- 1)))))
-(assert (and (distinct fletcher (+ cooper 1)) (distinct fletcher (+ cooper (- 1)))))
+(assert (and (distinct smith (+ fletcher 1)) (distinct smith (- fletcher 1))))
+(assert (and (distinct fletcher (+ cooper 1)) (distinct fletcher (- cooper 1))))
 
 (check-sat)
 (get-model)
